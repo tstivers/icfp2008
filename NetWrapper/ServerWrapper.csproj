@@ -7,7 +7,7 @@
     <ProjectGuid>{114F91B1-5972-4674-8489-4BC8E8505E4A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetWrapper</RootNamespace>
+    <RootNamespace>ICFP08</RootNamespace>
     <AssemblyName>NetWrapper</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -30,11 +30,22 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ServerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ICFP08\ICFP08.csproj">
+      <Project>{65BFB16F-4E82-413A-BAAD-CE14E8A35241}</Project>
+      <Name>ICFP08</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleMath\SimpleMath.csproj">
+      <Project>{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}</Project>
+      <Name>SimpleMath</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

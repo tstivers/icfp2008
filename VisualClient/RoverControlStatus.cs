@@ -10,40 +10,24 @@ namespace ICFP08
 {
     public partial class RoverControlStatus : UserControl
     {
-        public enum MOVE_STATE
-        {
-            accelerate,
-            coast,
-            brake
-        }
-
-        public enum TURN_STATE
-        {
-            hard_left,
-            left,
-            straight,
-            right,
-            hard_right
-        }
-
         public class WantedMoveChangedArgs : EventArgs
         {
-            public WantedMoveChangedArgs(MOVE_STATE state)
+            public WantedMoveChangedArgs(MoveType state)
             {
                 this.state = state;
             }
 
-            public readonly MOVE_STATE state;
+            public readonly MoveType state;
         }
 
         public class WantedTurnChangedArgs : EventArgs
         {
-            public WantedTurnChangedArgs(TURN_STATE state)
+            public WantedTurnChangedArgs(TurnType state)
             {
                 this.state = state;
             }
 
-            public readonly TURN_STATE state;
+            public readonly TurnType state;
         }
 
         public delegate void WantedTurnChangedHandler(object sender, WantedTurnChangedArgs wtc);
@@ -57,17 +41,17 @@ namespace ICFP08
         private Button m_wantedMove = null;
         private Button m_wantedTurn = null;
 
-        public MOVE_STATE MoveState
+        public MoveType MoveState
         {
             set
             {
                 Button newButton = coastButton;
                 switch (value)
                 {
-                    case MOVE_STATE.accelerate:
+                    case MoveType.Accelerate:
                         newButton = accellButton;
                         break;
-                    case MOVE_STATE.brake:
+                    case MoveType.Brake:
                         newButton = brakeButton;
                         break;
                     default:
@@ -86,23 +70,23 @@ namespace ICFP08
             }
         }
 
-        public TURN_STATE TurnState
+        public TurnType TurnState
         {
             set
             {
                 Button newButton = straightButton;
                 switch (value)
                 {
-                    case TURN_STATE.hard_left:
+                    case TurnType.HardLeft:
                         newButton = hardLeftButton;
                         break;
-                    case TURN_STATE.left:
+                    case TurnType.Left:
                         newButton = leftButton;
                         break;
-                    case TURN_STATE.right:
+                    case TurnType.Right:
                         newButton = rightButton;
                         break;
-                    case TURN_STATE.hard_right:
+                    case TurnType.HardRight:
                         newButton = hardRightButton;
                         break;
                     default:
@@ -123,8 +107,8 @@ namespace ICFP08
         public RoverControlStatus()
         {
             InitializeComponent();
-            MoveState = MOVE_STATE.coast;
-            TurnState = TURN_STATE.straight;
+            MoveState = MoveType.Roll;
+            TurnState = TurnType.Straight;
         }
 
         private void moveButton_Click(object sender, EventArgs e)
@@ -136,8 +120,8 @@ namespace ICFP08
             if (WantedMoveChanged != null)
             {
                 WantedMoveChanged(this, new WantedMoveChangedArgs(
-                    m_wantedMove == accellButton ? MOVE_STATE.accelerate :
-                        m_wantedMove == coastButton ? MOVE_STATE.coast : MOVE_STATE.brake));
+                    m_wantedMove == accellButton ? MoveType.Accelerate :
+                        m_wantedMove == coastButton ? MoveType.Roll : MoveType.Brake));
             }
         }
 
@@ -150,10 +134,10 @@ namespace ICFP08
             if (WantedTurnChanged != null)
             {
                 WantedTurnChanged(this, new WantedTurnChangedArgs(
-                    m_wantedTurn == hardLeftButton ? TURN_STATE.hard_left :
-                       m_wantedTurn == leftButton ? TURN_STATE.left : 
-                        m_wantedTurn == straightButton ? TURN_STATE.straight :
-                        m_wantedTurn == rightButton ? TURN_STATE.right : TURN_STATE.hard_right));
+                    m_wantedTurn == hardLeftButton ? TurnType.HardLeft :
+                    m_wantedTurn == leftButton ? TurnType.Left : 
+                    m_wantedTurn == straightButton ? TurnType.Straight :
+                    m_wantedTurn == rightButton ? TurnType.Right : TurnType.HardRight));
             }
         }  
 

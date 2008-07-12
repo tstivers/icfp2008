@@ -47,9 +47,18 @@ namespace ICFP08
 
     public class Rover : MobileObject
     {
-        public Rover() : base(new Vector2d(), 0.0f, 0.0f, 5.0f)
+        public Rover(float min_sensor, float max_sensor, float max_turn, float max_hard_turn) : base(new Vector2d(), 0.0f, 0.0f, 5.0f)
         {
+            this.min_sensor = min_sensor;
+            this.max_sensor = max_sensor;
+            this.max_turn = max_turn;
+            this.max_hard_turn = max_hard_turn;
         }
+
+        public readonly float min_sensor;
+        public readonly float max_sensor;
+        public readonly float max_turn;
+        public readonly float max_hard_turn;
     }
 
     public class Martian : MobileObject
@@ -91,6 +100,7 @@ namespace ICFP08
         private Rover m_rover;
         private Home m_home;
         private SizeF m_size;
+        private int m_timeLimit;
 
         public SizeF Size
         {
@@ -99,8 +109,15 @@ namespace ICFP08
                 return m_size;
             }
         }
+        public int TimeLimit
+        {
+            get
+            {
+                return m_timeLimit;
+            }
+        }
 
-        public WorldState(float width, float height)
+        public WorldState(float width, float height, int time_limit)
         {
             m_size = new SizeF(width, height);
         }

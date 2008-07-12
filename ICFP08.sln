@@ -31,6 +31,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMath", "SimpleMath\Si
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICFP08", "ICFP08\ICFP08.csproj", "{65BFB16F-4E82-413A-BAAD-CE14E8A35241}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +63,10 @@ Global
 		{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65BFB16F-4E82-413A-BAAD-CE14E8A35241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65BFB16F-4E82-413A-BAAD-CE14E8A35241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65BFB16F-4E82-413A-BAAD-CE14E8A35241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65BFB16F-4E82-413A-BAAD-CE14E8A35241}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{64871253-37DC-424A-B7AC-91D33CA8867A}</ProjectGuid>
+    <ProjectGuid>{65BFB16F-4E82-413A-BAAD-CE14E8A35241}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ICFP08</RootNamespace>
-    <AssemblyName>WorldState</AssemblyName>
+    <AssemblyName>ICFP08</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,8 +34,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WorldState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimpleMath\SimpleMath.csproj">

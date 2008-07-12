@@ -6,114 +6,6 @@ using System.Net;
 
 namespace ICFP08
 {
-
-    #region ENUMS
-    public enum MOVE_STATE
-    {
-        accelerating,
-        braking,
-        rolling
-    }
-    public enum TURN_STATE
-    {
-        hard_left,
-        left,
-        straight,
-        right,
-        hard_right
-    }
-    public enum OBSTACLE_KIND
-    {
-        boulder,
-        crater,
-        home
-    }
-    #endregion ENUMS
-
-    #region EventArgs
-    public class InitializationMessageEventArgs : EventArgs
-    {
-        public InitializationMessageEventArgs(float dx, float dy, int time_limit, float min_sensor, float max_sensor, float max_speed, float max_turn, float max_hard_turn)
-        {
-            this.dx = dx;
-            this.dy = dy;
-            this.time_limit = time_limit;
-            this.min_sensor = min_sensor;
-            this.max_sensor = max_sensor;
-            this.max_speed = max_speed;
-            this.max_turn = max_turn;
-            this.max_hard_turn = max_hard_turn;
-        }
-
-        public readonly float dx;
-        public readonly float dy;
-        public readonly int time_limit;
-        public readonly float min_sensor;
-        public readonly float max_sensor;
-        public readonly float max_speed;
-        public readonly float max_turn;
-        public readonly float max_hard_turn;
-    }
-    public class TelemetryMessageEventArgs : EventArgs
-    {
-        public class ObstacleInfo
-        {
-            public ObstacleInfo(OBSTACLE_KIND kind, float xpos, float ypos, float radius)
-            {
-                this.kind = kind;
-                this.xpos = xpos;
-                this.ypos = ypos;
-                this.radius = radius;
-            }
-
-            public readonly OBSTACLE_KIND kind;
-            public readonly float xpos;
-            public readonly float ypos;
-            public readonly float radius;
-        }
-
-        public class MartianInfo
-        {
-            public MartianInfo(float xpos, float ypos, float direction, float speed)
-            {
-                this.xpos = xpos;
-                this.ypos = ypos;
-                this.direction = direction;
-                this.speed = speed;
-            }
-
-            public readonly float xpos;
-            public readonly float ypos;
-            public readonly float direction;
-            public readonly float speed;
-        }
-
-        public TelemetryMessageEventArgs(int time_stamp, MOVE_STATE move_state, TURN_STATE turn_state, float xpos, float ypos, float direction,
-            float speed,
-            ObstacleInfo[] obstacles,
-            MartianInfo[] martians)
-        {
-            this.time_stamp = time_stamp;
-            this.move_state = move_state;
-            this.turn_state = turn_state;
-            this.xpos = xpos;
-            this.ypos = ypos;
-            this.direction = direction;
-            this.speed = speed;
-            this.obstacles = obstacles;
-            this.martians = martians;
-        }
-
-        public readonly int time_stamp;
-        public readonly MOVE_STATE move_state;
-        public readonly TURN_STATE turn_state;
-        public readonly float xpos;
-        public readonly float ypos;
-        public readonly float direction;
-        public readonly float speed;
-        public readonly ObstacleInfo[] obstacles;
-        public readonly MartianInfo[] martians;
-    }
     public class MessageEventArgs : EventArgs
     {
         public MessageEventArgs(string message)
@@ -122,6 +14,24 @@ namespace ICFP08
         }
 
         public readonly string message;
+    }
+    public class InitializationMessageEventArgs : EventArgs
+    {
+        public InitializationMessageEventArgs(InitializationMessage m)
+        {
+            this.message = m;
+        }
+
+        public readonly InitializationMessage message;
+    }
+    public class TelemetryMessageEventArgs : EventArgs
+    {
+        public TelemetryMessageEventArgs(TelemetryMessage m)
+        {
+            this.message = m;
+        }
+        
+        public readonly TelemetryMessage message;
     }
     public class EventMessageEventArgs : EventArgs
     {
@@ -143,7 +53,6 @@ namespace ICFP08
         public readonly int score;
         public readonly int time_stamp;
     }
-    #endregion EventArgs
 
     /// <summary>
     ///  from msdn
@@ -157,41 +66,27 @@ namespace ICFP08
         public ServerWrapper wrapper = null;
     }
 
-    public class Message
-    {
-        public Message(string message)
-        {
-            this.message = message;
-        }
-        public string message;
-    }
-
     public class ServerWrapper
     {
         public delegate void MessageReceievedEventHandler(object sender, MessageEventArgs me);
-        public event MessageReceievedEventHandler MessageReceived;
-
         public delegate void InitializationMessageEventHandler(object sender, InitializationMessageEventArgs ime);
-        public event InitializationMessageEventHandler InitializationMessage;
-
         public delegate void TelemetryMessageEventHandler(object sender, TelemetryMessageEventArgs tme);
-        public event TelemetryMessageEventHandler TelemetryMessage;
-
         public delegate void EventMessageEventHandler(object sender, EventMessageEventArgs ae);
+        public delegate void EndOfRunMessageEventHandler(object sender, EndOfRunMessageEventArgs ee);
+
+        public event MessageReceievedEventHandler MessageReceived;
+        public event InitializationMessageEventHandler InitializationMessage;
+        public event TelemetryMessageEventHandler TelemetryMessage;
         public event EventMessageEventHandler CrashMessage;
         public event EventMessageEventHandler CraterMessage;
         public event EventMessageEventHandler KilledMessage;
         public event EventMessageEventHandler SuccessMessage;
-
-        public delegate void EndOfRunMessageEventHandler(object sender, EndOfRunMessageEventArgs ee);
         public event EndOfRunMessageEventHandler EndOfRunMessage;
 
         protected Socket m_socket;
-        /// <summary>
-        /// protects the message list
-        /// </summary>
-        protected Object m_lock = new Object();
-        public List<Message> m_messages = new List<Message>();
+
+        protected Object m_messagelock = new Object();
+        public List<string> m_messages = new List<string>();
 
         public bool Connected
         {
@@ -261,31 +156,31 @@ namespace ICFP08
 
         public void ProcessMessages()
         {
-            lock(m_lock)
+            lock(m_messagelock)
             {
-                foreach(Message m in m_messages)
+                foreach(string message in m_messages)
                 {
                     if (MessageReceived != null)
-                        MessageReceived(this, new MessageEventArgs(m.message));
-                    ParseMessage(m.message);
+                        MessageReceived(this, new MessageEventArgs(message));
+                    ParseMessage(message);
                 }
                 m_messages.Clear();
             }
         }
 
-        public void SendCommand(MOVE_STATE ms, TURN_STATE ts)
+        public void SendCommand(MoveType move, TurnType turn)
         {
             if (!Connected)
                 return;
 
             string command = "";
-            if(ms == MOVE_STATE.accelerating)
+            if(move == MoveType.Accelerate)
                 command += "a";
-            else if(ms == MOVE_STATE.braking)
+            else if(move == MoveType.Brake)
                 command += "b";
-            if(ts == TURN_STATE.left || ts == TURN_STATE.hard_left)
+            if(turn == TurnType.Left || turn == TurnType.HardLeft)
                 command += "l";
-            else if(ts == TURN_STATE.right || ts == TURN_STATE.hard_right)
+            else if(turn == TurnType.Right || turn == TurnType.HardRight)
                 command += "r";
             command += ";";
             byte[] buffer = Encoding.ASCII.GetBytes(command);
@@ -331,37 +226,37 @@ namespace ICFP08
         private void ParseTelemetry(string[] argv)
         {
             int time = int.Parse(argv[1]);
-            MOVE_STATE ms = MOVE_STATE.rolling;
+            MoveType ms = MoveType.Roll;
             switch(argv[2][0])
             {
                 case 'a':
-                    ms = MOVE_STATE.accelerating;
+                    ms = MoveType.Accelerate;
                     break;
                 case 'b':
-                    ms = MOVE_STATE.braking;
+                    ms = MoveType.Brake;
                     break;
                 case '-':
-                    ms = MOVE_STATE.rolling;
+                    ms = MoveType.Roll;
                     break;
             }
 
-            TURN_STATE ts = TURN_STATE.straight;
+            TurnType ts = TurnType.Straight;
             switch(argv[2][1])
             {
                 case 'L':
-                    ts = TURN_STATE.hard_left;
+                    ts = TurnType.HardLeft;
                     break;
                 case 'l':
-                    ts = TURN_STATE.left;
+                    ts = TurnType.Left;
                     break;
                 case '-':
-                    ts = TURN_STATE.straight;
+                    ts = TurnType.Straight;
                     break;
                 case 'r':
-                    ts = TURN_STATE.right;
+                    ts = TurnType.Right;
                     break;
                 case 'R':
-                    ts = TURN_STATE.hard_right;
+                    ts = TurnType.HardRight;
                     break;
             }
 
@@ -393,8 +288,8 @@ namespace ICFP08
             }
 
             argc = 7;
-            TelemetryMessageEventArgs.ObstacleInfo[] obstacles = new TelemetryMessageEventArgs.ObstacleInfo[obstacle_count];
-            TelemetryMessageEventArgs.MartianInfo[] martians = new TelemetryMessageEventArgs.MartianInfo[martian_count];
+            ObstacleMessage[] obstacles = new ObstacleMessage[obstacle_count];
+            MartianMessage[] martians = new MartianMessage[martian_count];
             obstacle_count = 0;
             martian_count = 0;
             while (argc < argv.Length)
@@ -404,15 +299,15 @@ namespace ICFP08
                     case 'b':
                     case 'c':
                     case 'h':
-                        obstacles[obstacle_count++] = new TelemetryMessageEventArgs.ObstacleInfo(
-                            argv[argc][0] == 'b' ? OBSTACLE_KIND.boulder : argv[argc][0] == 'c' ? OBSTACLE_KIND.crater : OBSTACLE_KIND.home,
+                        obstacles[obstacle_count++] = new ObstacleMessage(
+                            argv[argc][0] == 'b' ? ObstacleType.Boulder : argv[argc][0] == 'c' ? ObstacleType.Crater : ObstacleType.Home,
                             float.Parse(argv[argc + 1]),
                             float.Parse(argv[argc + 2]),
                             float.Parse(argv[argc + 3]));
                         argc += 4;
                         break;
                     case 'm':
-                        martians[martian_count++] = new TelemetryMessageEventArgs.MartianInfo(
+                        martians[martian_count++] = new MartianMessage(
                             float.Parse(argv[argc + 1]),
                             float.Parse(argv[argc + 2]),
                             float.Parse(argv[argc + 3]),
@@ -423,7 +318,7 @@ namespace ICFP08
             }
 
             if(TelemetryMessage != null)
-                TelemetryMessage(this, new TelemetryMessageEventArgs(
+                TelemetryMessage(this, new TelemetryMessageEventArgs(new TelemetryMessage(
                     time,
                     ms,
                     ts,
@@ -432,13 +327,13 @@ namespace ICFP08
                     direction,
                     speed,
                     obstacles,
-                    martians));
+                    martians)));
         }
 
         private void ParseInitialization(string[] argv)
         {
             if(InitializationMessage != null)
-                InitializationMessage(this, new InitializationMessageEventArgs(
+                InitializationMessage(this, new InitializationMessageEventArgs(new InitializationMessage(
                     float.Parse(argv[1]), // dx
                     float.Parse(argv[2]), // dy
                     int.Parse(argv[3]), // time_limit
@@ -446,7 +341,7 @@ namespace ICFP08
                     float.Parse(argv[5]), // max_sensor
                     float.Parse(argv[6]), // max_speed
                     float.Parse(argv[7]), // max_turn
-                    float.Parse(argv[8]))); // max_hard_turn
+                    float.Parse(argv[8])))); // max_hard_turn
         } 
 
         void ReceiveMessage()
@@ -469,12 +364,11 @@ namespace ICFP08
                 so.sb.Append(Encoding.ASCII.GetString(so.buffer, 0, read));
                 if(so.sb.ToString().EndsWith(";"))
                 {
-                    lock (so.wrapper.m_lock)
+                    lock (so.wrapper.m_messagelock)
                     {
                         // TODO: maybe do some parsing here?
                         string[] messages = so.sb.ToString().Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                        foreach(string message in messages)
-                            so.wrapper.m_messages.Add(new Message(message));
+                        so.wrapper.m_messages.AddRange(messages);
                         so.sb.Length = 0;
                     }
                 }

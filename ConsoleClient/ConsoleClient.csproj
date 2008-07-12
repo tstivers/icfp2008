@@ -38,6 +38,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ICFP08\ICFP08.csproj">
+      <Project>{65BFB16F-4E82-413A-BAAD-CE14E8A35241}</Project>
+      <Name>ICFP08</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetWrapper\ServerWrapper.csproj">
       <Project>{114F91B1-5972-4674-8489-4BC8E8505E4A}</Project>
       <Name>ServerWrapper</Name>

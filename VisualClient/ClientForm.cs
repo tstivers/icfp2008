@@ -40,17 +40,12 @@ namespace ICFP08
 
         void roverControlStatus1_WantedTurnChanged(object sender, RoverControlStatus.WantedTurnChangedArgs wtc)
         {
-            m_wrapper.SendCommand(MOVE_STATE.rolling,
-                wtc.state == RoverControlStatus.TURN_STATE.hard_left || wtc.state == RoverControlStatus.TURN_STATE.left ? TURN_STATE.left :
-                wtc.state == RoverControlStatus.TURN_STATE.hard_right || wtc.state == RoverControlStatus.TURN_STATE.right ? TURN_STATE.right :
-                TURN_STATE.straight);
+            m_wrapper.SendCommand(MoveType.Roll, wtc.state);
         }
 
         void roverControlStatus1_WantedMoveChanged(object sender, RoverControlStatus.WantedMoveChangedArgs wmc)
         {
-            m_wrapper.SendCommand(wmc.state == RoverControlStatus.MOVE_STATE.accelerate ? MOVE_STATE.accelerating :
-                wmc.state == RoverControlStatus.MOVE_STATE.brake ? MOVE_STATE.braking : MOVE_STATE.rolling,
-                TURN_STATE.straight);
+            m_wrapper.SendCommand(wmc.state, TurnType.Straight); 
         }
 
         void m_timer_Tick(object sender, EventArgs e)
@@ -60,23 +55,19 @@ namespace ICFP08
 
         void m_wrapper_TelemetryMessage(object sender, TelemetryMessageEventArgs tme)
         {
-            numericStatus.X = tme.xpos;
-            numericStatus.Y = tme.ypos;
-            numericStatus.Speed = tme.speed;
-            numericStatus.Direction = tme.direction;
-            compassControl.Direction = tme.direction;
-            roverControlStatus1.MoveState = tme.move_state == MOVE_STATE.accelerating ? RoverControlStatus.MOVE_STATE.accelerate :
-                tme.move_state == MOVE_STATE.braking ? RoverControlStatus.MOVE_STATE.brake : RoverControlStatus.MOVE_STATE.coast;
-            roverControlStatus1.TurnState = tme.turn_state == TURN_STATE.hard_left ? RoverControlStatus.TURN_STATE.hard_left :
-                tme.turn_state == TURN_STATE.left ? RoverControlStatus.TURN_STATE.left :
-                tme.turn_state == TURN_STATE.straight ? RoverControlStatus.TURN_STATE.straight :
-                tme.turn_state == TURN_STATE.right ? RoverControlStatus.TURN_STATE.right : RoverControlStatus.TURN_STATE.hard_right;
-            timeLabel.Text = tme.time_stamp.ToString();
+            numericStatus.X = tme.message.position.x;
+            numericStatus.Y = tme.message.position.y;
+            numericStatus.Speed = tme.message.speed;
+            numericStatus.Direction = tme.message.direction;
+            compassControl.Direction = tme.message.direction;
+            roverControlStatus1.MoveState = tme.message.move_state;
+            roverControlStatus1.TurnState = tme.message.turn_state;
+            timeLabel.Text = tme.message.time_stamp.ToString();
         }
 
         void m_wrapper_InitializationMessage(object sender, InitializationMessageEventArgs ime)
         {
-            AddMessage("[wrapper] received init message (" + ime.dx + ", " + ime.dy + ")");
+            AddMessage("[wrapper] received init message (" + ime.message.size.Width + ", " + ime.message.size.Height + ")");
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
