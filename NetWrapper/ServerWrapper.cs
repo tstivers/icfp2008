@@ -364,7 +364,9 @@ namespace ICFP08
 
             float xpos = float.Parse(argv[3]);
             float ypos = float.Parse(argv[4]);
-            float direction = float.Parse(argv[5]);
+            float direction = -float.Parse(argv[5]) + 90;
+            if (direction < 0.0f)
+                direction += 360.0f;
             float speed = float.Parse(argv[6]);
 
             int argc = 7;

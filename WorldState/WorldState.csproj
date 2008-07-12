@@ -34,8 +34,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="WorldState.cs" />
+    <Compile Include="StaticObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorldState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleMath\SimpleMath.csproj">
+      <Project>{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}</Project>
+      <Name>SimpleMath</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

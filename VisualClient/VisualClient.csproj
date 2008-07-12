@@ -42,11 +42,11 @@
     <Compile Include="CompassControl.Designer.cs">
       <DependentUpon>CompassControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="ClientForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="ClientForm.Designer.cs">
+      <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NumericStatusControl.cs">
       <SubType>UserControl</SubType>
@@ -54,19 +54,29 @@
     <Compile Include="NumericStatusControl.Designer.cs">
       <DependentUpon>NumericStatusControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="PlayfieldVisualizer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PlayfieldVisualizer.Designer.cs">
+      <DependentUpon>PlayfieldVisualizer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="CompassControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CompassControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="ClientForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Form1.cs</DependentUpon>
+      <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NumericStatusControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>NumericStatusControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlayfieldVisualizer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PlayfieldVisualizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

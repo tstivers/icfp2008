@@ -8,21 +8,34 @@ using System.Windows.Forms;
 
 namespace ICFP08
 {
-    public partial class Form1 : Form
+    public partial class ClientForm : Form
     {
         private ServerWrapper m_wrapper = new ServerWrapper();
         private Timer m_timer = new Timer();
 
-        public Form1()
+        public ClientForm()
         {
             InitializeComponent();
             m_wrapper.InitializationMessage += new ServerWrapper.InitializationMessageEventHandler(m_wrapper_InitializationMessage);
             m_wrapper.TelemetryMessage += new ServerWrapper.TelemetryMessageEventHandler(m_wrapper_TelemetryMessage);
-            m_timer.Interval = 10;
+            m_timer.Interval = 1;
             m_timer.Tick += new EventHandler(m_timer_Tick);
             m_timer.Start();
             roverControlStatus1.WantedMoveChanged += new RoverControlStatus.WantedMoveChangedHandler(roverControlStatus1_WantedMoveChanged);
             roverControlStatus1.WantedTurnChanged += new RoverControlStatus.WantedTurnChangedHandler(roverControlStatus1_WantedTurnChanged);
+        }
+
+        public void AddMessage(string message)
+        {
+            if(this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(delegate {
+                    AddMessage(message);
+                }));
+                return;
+            }
+            
+            messageBox.AppendText(message + "\r\n");
         }
 
         void roverControlStatus1_WantedTurnChanged(object sender, RoverControlStatus.WantedTurnChangedArgs wtc)
@@ -58,11 +71,12 @@ namespace ICFP08
                 tme.turn_state == TURN_STATE.left ? RoverControlStatus.TURN_STATE.left :
                 tme.turn_state == TURN_STATE.straight ? RoverControlStatus.TURN_STATE.straight :
                 tme.turn_state == TURN_STATE.right ? RoverControlStatus.TURN_STATE.right : RoverControlStatus.TURN_STATE.hard_right;
+            timeLabel.Text = tme.time_stamp.ToString();
         }
 
         void m_wrapper_InitializationMessage(object sender, InitializationMessageEventArgs ime)
         {
-            //throw new Exception("The method or operation is not implemented.");
+            AddMessage("[wrapper] received init message (" + ime.dx + ", " + ime.dy + ")");
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,6 +1,6 @@
 namespace ICFP08
 {
-    partial class Form1
+    partial class ClientForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,14 +30,18 @@ namespace ICFP08
         {
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.verticalSplit = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.messageBox = new System.Windows.Forms.TextBox();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.numericStatus = new ICFP08.NumericStatusControl();
             this.roverControlStatus1 = new ICFP08.RoverControlStatus();
             this.compassControl = new ICFP08.CompassControl();
@@ -46,12 +50,15 @@ namespace ICFP08
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             this.verticalSplit.Panel1.SuspendLayout();
             this.verticalSplit.Panel2.SuspendLayout();
             this.verticalSplit.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripContainer1
@@ -81,25 +88,28 @@ namespace ICFP08
             this.statusStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripStatusLabel2});
+            this.timeLabel,
+            this.toolStripStatusLabel3});
             this.statusStrip1.Location = new System.Drawing.Point(0, 0);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(752, 22);
             this.statusStrip1.TabIndex = 0;
             // 
-            // menuStrip1
+            // toolStripStatusLabel1
             // 
-            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(752, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(37, 17);
+            this.toolStripStatusLabel1.Text = "Time:";
+            // 
+            // timeLabel
+            // 
+            this.timeLabel.Name = "timeLabel";
+            this.timeLabel.Size = new System.Drawing.Size(13, 17);
+            this.timeLabel.Text = "0";
             // 
             // verticalSplit
             // 
+            this.verticalSplit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.verticalSplit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.verticalSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.verticalSplit.Location = new System.Drawing.Point(0, 0);
@@ -118,16 +128,39 @@ namespace ICFP08
             // 
             // splitContainer2
             // 
+            this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer2.Panel1
+            // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer2.Size = new System.Drawing.Size(563, 504);
             this.splitContainer2.SplitterDistance = 359;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(561, 139);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.messageBox);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(553, 113);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Messages";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel1
             // 
@@ -143,8 +176,19 @@ namespace ICFP08
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(185, 504);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(183, 502);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(752, 24);
+            this.menuStrip1.TabIndex = 0;
+            this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
@@ -161,20 +205,25 @@ namespace ICFP08
             this.connectToolStripMenuItem.Text = "connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
-            // toolStripStatusLabel1
+            // messageBox
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            this.messageBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.messageBox.Location = new System.Drawing.Point(3, 3);
+            this.messageBox.Multiline = true;
+            this.messageBox.Name = "messageBox";
+            this.messageBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.messageBox.Size = new System.Drawing.Size(547, 107);
+            this.messageBox.TabIndex = 0;
             // 
-            // toolStripStatusLabel2
+            // toolStripStatusLabel3
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel2.Text = "toolStripStatusLabel2";
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(23, 17);
+            this.toolStripStatusLabel3.Text = "ms";
             // 
             // numericStatus
             // 
+            this.numericStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericStatus.Location = new System.Drawing.Point(3, 3);
             this.numericStatus.Name = "numericStatus";
             this.numericStatus.Size = new System.Drawing.Size(187, 105);
@@ -182,26 +231,28 @@ namespace ICFP08
             // 
             // roverControlStatus1
             // 
+            this.roverControlStatus1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.roverControlStatus1.Location = new System.Drawing.Point(3, 114);
             this.roverControlStatus1.Name = "roverControlStatus1";
             this.roverControlStatus1.Size = new System.Drawing.Size(178, 121);
             this.roverControlStatus1.TabIndex = 1;
             // 
-            // compassControl1
+            // compassControl
             // 
+            this.compassControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.compassControl.Location = new System.Drawing.Point(3, 241);
-            this.compassControl.Name = "compassControl1";
+            this.compassControl.Name = "compassControl";
             this.compassControl.Size = new System.Drawing.Size(178, 165);
             this.compassControl.TabIndex = 2;
             // 
-            // Form1
+            // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 550);
             this.Controls.Add(this.toolStripContainer1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "ClientForm";
+            this.Text = "Rover Client";
             this.toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.BottomToolStripPanel.PerformLayout();
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
@@ -211,13 +262,17 @@ namespace ICFP08
             this.toolStripContainer1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.verticalSplit.Panel1.ResumeLayout(false);
             this.verticalSplit.Panel2.ResumeLayout(false);
             this.verticalSplit.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -231,12 +286,16 @@ namespace ICFP08
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel timeLabel;
         private NumericStatusControl numericStatus;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
         private RoverControlStatus roverControlStatus1;
         private CompassControl compassControl;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.TextBox messageBox;
 
     }
 }
