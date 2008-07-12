@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualClient", "VisualClient\VisualClient.csproj", "{4D3D3580-901E-4CC8-A02D-9581301CC1B0}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerWrapper", "NetWrapper\ServerWrapper.csproj", "{114F91B1-5972-4674-8489-4BC8E8505E4A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleClient", "ConsoleClient\ConsoleClient.csproj", "{58A65279-8E91-4674-A8A9-069AD218B9CA}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldState", "WorldState\WorldState.csproj", "{64871253-37DC-424A-B7AC-91D33CA8867A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMath", "SimpleMath\SimpleMath.csproj", "{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D3D3580-901E-4CC8-A02D-9581301CC1B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D3D3580-901E-4CC8-A02D-9581301CC1B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D3D3580-901E-4CC8-A02D-9581301CC1B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D3D3580-901E-4CC8-A02D-9581301CC1B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{114F91B1-5972-4674-8489-4BC8E8505E4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{114F91B1-5972-4674-8489-4BC8E8505E4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{114F91B1-5972-4674-8489-4BC8E8505E4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{114F91B1-5972-4674-8489-4BC8E8505E4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58A65279-8E91-4674-A8A9-069AD218B9CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A65279-8E91-4674-A8A9-069AD218B9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A65279-8E91-4674-A8A9-069AD218B9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A65279-8E91-4674-A8A9-069AD218B9CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64871253-37DC-424A-B7AC-91D33CA8867A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64871253-37DC-424A-B7AC-91D33CA8867A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64871253-37DC-424A-B7AC-91D33CA8867A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64871253-37DC-424A-B7AC-91D33CA8867A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		VisualSVNWorkingCopyRoot = 
+	EndGlobalSection
+EndGlobal
