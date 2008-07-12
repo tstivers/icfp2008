@@ -280,9 +280,9 @@ namespace ICFP08
                 command += "a";
             else if(ms == MOVE_STATE.braking)
                 command += "b";
-            if(ts == TURN_STATE.left)
+            if(ts == TURN_STATE.left || ts == TURN_STATE.hard_left)
                 command += "l";
-            else if(ts == TURN_STATE.right)
+            else if(ts == TURN_STATE.right || ts == TURN_STATE.hard_right)
                 command += "r";
             command += ";";
             byte[] buffer = Encoding.ASCII.GetBytes(command);

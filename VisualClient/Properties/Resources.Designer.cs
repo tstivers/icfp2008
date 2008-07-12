@@ -59,5 +59,12 @@ namespace ICFP08.Properties {
                 resourceCulture = value;
             }
         }
+        
+        internal static System.Drawing.Bitmap compass {
+            get {
+                object obj = ResourceManager.GetObject("compass", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
