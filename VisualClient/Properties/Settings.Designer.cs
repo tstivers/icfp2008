@@ -22,5 +22,29 @@ namespace ICFP08.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("eyetraxx.com")]
+        public string server {
+            get {
+                return ((string)(this["server"]));
+            }
+            set {
+                this["server"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("17676")]
+        public int port {
+            get {
+                return ((int)(this["port"]));
+            }
+            set {
+                this["port"] = value;
+            }
+        }
     }
 }

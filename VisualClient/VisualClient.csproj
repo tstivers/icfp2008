@@ -87,6 +87,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>RoverControlStatus.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -107,6 +111,12 @@
     <Compile Include="RoverControlStatus.Designer.cs">
       <DependentUpon>RoverControlStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetWrapper\ServerWrapper.csproj">
@@ -123,6 +133,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Resources\compass.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

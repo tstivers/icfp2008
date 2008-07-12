@@ -81,7 +81,21 @@ namespace ICFP08
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_wrapper.Connect("172.16.1.44", 17676);
+            m_wrapper.Connect(Properties.Settings.Default.server, Properties.Settings.Default.port);
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsForm settings = new SettingsForm();
+            settings.serverBox.Text = Properties.Settings.Default.server;
+            settings.portBox.Text = Properties.Settings.Default.port.ToString();
+
+            if (settings.ShowDialog() == DialogResult.OK)
+            {
+                Properties.Settings.Default.server = settings.serverBox.Text;
+                Properties.Settings.Default.port = int.Parse(settings.portBox.Text);
+                Properties.Settings.Default.Save();
+            }
         }
     }
 }

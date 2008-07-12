@@ -45,6 +45,7 @@ namespace ICFP08
             this.numericStatus = new ICFP08.NumericStatusControl();
             this.roverControlStatus1 = new ICFP08.RoverControlStatus();
             this.compassControl = new ICFP08.CompassControl();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -193,7 +194,8 @@ namespace ICFP08
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.connectToolStripMenuItem});
+            this.connectToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "file";
@@ -201,7 +203,7 @@ namespace ICFP08
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectToolStripMenuItem.Text = "connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
@@ -244,6 +246,13 @@ namespace ICFP08
             this.compassControl.Name = "compassControl";
             this.compassControl.Size = new System.Drawing.Size(178, 165);
             this.compassControl.TabIndex = 2;
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem.Text = "settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // ClientForm
             // 
@@ -296,6 +305,7 @@ namespace ICFP08
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.TextBox messageBox;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
 
     }
 }
