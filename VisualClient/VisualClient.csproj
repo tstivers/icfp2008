@@ -54,11 +54,11 @@
     <Compile Include="NumericStatusControl.Designer.cs">
       <DependentUpon>NumericStatusControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PlayfieldVisualizer.cs">
+    <Compile Include="WorldVisualizer.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PlayfieldVisualizer.Designer.cs">
-      <DependentUpon>PlayfieldVisualizer.cs</DependentUpon>
+    <Compile Include="WorldVisualizer.Designer.cs">
+      <DependentUpon>WorldVisualizer.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,9 +74,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>NumericStatusControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PlayfieldVisualizer.resx">
+    <EmbeddedResource Include="WorldVisualizer.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>PlayfieldVisualizer.cs</DependentUpon>
+      <DependentUpon>WorldVisualizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

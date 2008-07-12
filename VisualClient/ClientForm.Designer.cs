@@ -32,20 +32,21 @@ namespace ICFP08
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timeLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.verticalSplit = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.messageBox = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.messageBox = new System.Windows.Forms.TextBox();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.worldVisualizer = new ICFP08.WorldVisualizer();
             this.numericStatus = new ICFP08.NumericStatusControl();
             this.roverControlStatus1 = new ICFP08.RoverControlStatus();
             this.compassControl = new ICFP08.CompassControl();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -54,6 +55,7 @@ namespace ICFP08
             this.verticalSplit.Panel1.SuspendLayout();
             this.verticalSplit.Panel2.SuspendLayout();
             this.verticalSplit.SuspendLayout();
+            this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -108,6 +110,12 @@ namespace ICFP08
             this.timeLabel.Size = new System.Drawing.Size(13, 17);
             this.timeLabel.Text = "0";
             // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(23, 17);
+            this.toolStripStatusLabel3.Text = "ms";
+            // 
             // verticalSplit
             // 
             this.verticalSplit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -134,6 +142,10 @@ namespace ICFP08
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.worldVisualizer);
             // 
             // splitContainer2.Panel2
             // 
@@ -162,6 +174,16 @@ namespace ICFP08
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Messages";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // messageBox
+            // 
+            this.messageBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.messageBox.Location = new System.Drawing.Point(3, 3);
+            this.messageBox.Multiline = true;
+            this.messageBox.Name = "messageBox";
+            this.messageBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.messageBox.Size = new System.Drawing.Size(547, 107);
+            this.messageBox.TabIndex = 0;
             // 
             // tableLayoutPanel1
             // 
@@ -203,25 +225,30 @@ namespace ICFP08
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.connectToolStripMenuItem.Text = "connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
-            // messageBox
+            // settingsToolStripMenuItem
             // 
-            this.messageBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.messageBox.Location = new System.Drawing.Point(3, 3);
-            this.messageBox.Multiline = true;
-            this.messageBox.Name = "messageBox";
-            this.messageBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.messageBox.Size = new System.Drawing.Size(547, 107);
-            this.messageBox.TabIndex = 0;
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.settingsToolStripMenuItem.Text = "settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
-            // toolStripStatusLabel3
+            // worldVisualizer
             // 
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(23, 17);
-            this.toolStripStatusLabel3.Text = "ms";
+            this.worldVisualizer.BackColor = System.Drawing.SystemColors.Window;
+            this.worldVisualizer.BoulderColor = System.Drawing.Color.Brown;
+            this.worldVisualizer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.worldVisualizer.GridColor = System.Drawing.Color.LightGray;
+            this.worldVisualizer.GridSize = new System.Drawing.Size(20, 20);
+            this.worldVisualizer.Location = new System.Drawing.Point(0, 0);
+            this.worldVisualizer.Name = "worldVisualizer";
+            this.worldVisualizer.RoverColor = System.Drawing.Color.Blue;
+            this.worldVisualizer.Size = new System.Drawing.Size(561, 357);
+            this.worldVisualizer.TabIndex = 0;
+            this.worldVisualizer.Text = "worldVisualizer1";
             // 
             // numericStatus
             // 
@@ -247,13 +274,6 @@ namespace ICFP08
             this.compassControl.Size = new System.Drawing.Size(178, 165);
             this.compassControl.TabIndex = 2;
             // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.settingsToolStripMenuItem.Text = "settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
-            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -274,6 +294,7 @@ namespace ICFP08
             this.verticalSplit.Panel1.ResumeLayout(false);
             this.verticalSplit.Panel2.ResumeLayout(false);
             this.verticalSplit.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
@@ -306,7 +327,7 @@ namespace ICFP08
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.TextBox messageBox;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-
+        private WorldVisualizer worldVisualizer;
     }
 }
 

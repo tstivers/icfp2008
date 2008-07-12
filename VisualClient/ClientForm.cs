@@ -12,6 +12,7 @@ namespace ICFP08
     {
         private ServerWrapper m_wrapper = new ServerWrapper();
         private Timer m_timer = new Timer();
+        private WorldState m_worldState; 
 
         public ClientForm()
         {
@@ -55,6 +56,7 @@ namespace ICFP08
 
         void m_wrapper_TelemetryMessage(object sender, TelemetryMessageEventArgs tme)
         {
+            m_worldState.UpdateWorldState(tme.message);
             numericStatus.X = tme.message.position.x;
             numericStatus.Y = tme.message.position.y;
             numericStatus.Speed = tme.message.speed;
@@ -68,6 +70,8 @@ namespace ICFP08
         void m_wrapper_InitializationMessage(object sender, InitializationMessageEventArgs ime)
         {
             AddMessage("[wrapper] received init message (" + ime.message.size.Width + ", " + ime.message.size.Height + ")");
+            m_worldState = new WorldState(ime.message);
+            worldVisualizer.State = m_worldState;
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,6 +1,6 @@
 namespace ICFP08
 {
-    partial class PlayfieldVisualizer
+    partial class WorldVisualizer
     {
         /// <summary>
         /// Required designer variable.

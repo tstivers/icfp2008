@@ -38,6 +38,10 @@
     <Compile Include="WorldState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ICFP08\ICFP08.csproj">
+      <Project>{65BFB16F-4E82-413A-BAAD-CE14E8A35241}</Project>
+      <Name>ICFP08</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SimpleMath\SimpleMath.csproj">
       <Project>{EAB33F12-22EF-4E0C-ABE8-110E953FDAE4}</Project>
       <Name>SimpleMath</Name>
