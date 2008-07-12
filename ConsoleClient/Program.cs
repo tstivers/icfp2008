@@ -47,7 +47,7 @@ namespace ConsoleClient
 
         static void s_TelemetryMessage(object sender, TelemetryMessageEventArgs tme)
         {
-            foreach (TelemetryMessageEventArgs.Obstacle o in tme.obstacles)
+            foreach (TelemetryMessageEventArgs.ObstacleInfo o in tme.obstacles)
             {
                 if (o.kind == OBSTACLE_KIND.home && !ws.HomeFound)
                     ws.AddHome(o.xpos, o.ypos, o.radius);

@@ -56,9 +56,9 @@ namespace ICFP08
     }
     public class TelemetryMessageEventArgs : EventArgs
     {
-        public class Obstacle
+        public class ObstacleInfo
         {
-            public Obstacle(OBSTACLE_KIND kind, float xpos, float ypos, float radius)
+            public ObstacleInfo(OBSTACLE_KIND kind, float xpos, float ypos, float radius)
             {
                 this.kind = kind;
                 this.xpos = xpos;
@@ -72,9 +72,9 @@ namespace ICFP08
             public readonly float radius;
         }
 
-        public class Martian
+        public class MartianInfo
         {
-            public Martian(float xpos, float ypos, float direction, float speed)
+            public MartianInfo(float xpos, float ypos, float direction, float speed)
             {
                 this.xpos = xpos;
                 this.ypos = ypos;
@@ -90,8 +90,8 @@ namespace ICFP08
 
         public TelemetryMessageEventArgs(int time_stamp, MOVE_STATE move_state, TURN_STATE turn_state, float xpos, float ypos, float direction,
             float speed,
-            Obstacle[] obstacles,
-            Martian[] martians)
+            ObstacleInfo[] obstacles,
+            MartianInfo[] martians)
         {
             this.time_stamp = time_stamp;
             this.move_state = move_state;
@@ -111,8 +111,8 @@ namespace ICFP08
         public readonly float ypos;
         public readonly float direction;
         public readonly float speed;
-        public readonly Obstacle[] obstacles;
-        public readonly Martian[] martians;
+        public readonly ObstacleInfo[] obstacles;
+        public readonly MartianInfo[] martians;
     }
     public class MessageEventArgs : EventArgs
     {
@@ -275,6 +275,9 @@ namespace ICFP08
 
         public void SendCommand(MOVE_STATE ms, TURN_STATE ts)
         {
+            if (!Connected)
+                return;
+
             string command = "";
             if(ms == MOVE_STATE.accelerating)
                 command += "a";
@@ -390,8 +393,8 @@ namespace ICFP08
             }
 
             argc = 7;
-            TelemetryMessageEventArgs.Obstacle[] obstacles = new TelemetryMessageEventArgs.Obstacle[obstacle_count];
-            TelemetryMessageEventArgs.Martian[] martians = new TelemetryMessageEventArgs.Martian[martian_count];
+            TelemetryMessageEventArgs.ObstacleInfo[] obstacles = new TelemetryMessageEventArgs.ObstacleInfo[obstacle_count];
+            TelemetryMessageEventArgs.MartianInfo[] martians = new TelemetryMessageEventArgs.MartianInfo[martian_count];
             obstacle_count = 0;
             martian_count = 0;
             while (argc < argv.Length)
@@ -401,7 +404,7 @@ namespace ICFP08
                     case 'b':
                     case 'c':
                     case 'h':
-                        obstacles[obstacle_count++] = new TelemetryMessageEventArgs.Obstacle(
+                        obstacles[obstacle_count++] = new TelemetryMessageEventArgs.ObstacleInfo(
                             argv[argc][0] == 'b' ? OBSTACLE_KIND.boulder : argv[argc][0] == 'c' ? OBSTACLE_KIND.crater : OBSTACLE_KIND.home,
                             float.Parse(argv[argc + 1]),
                             float.Parse(argv[argc + 2]),
@@ -409,7 +412,7 @@ namespace ICFP08
                         argc += 4;
                         break;
                     case 'm':
-                        martians[martian_count++] = new TelemetryMessageEventArgs.Martian(
+                        martians[martian_count++] = new TelemetryMessageEventArgs.MartianInfo(
                             float.Parse(argv[argc + 1]),
                             float.Parse(argv[argc + 2]),
                             float.Parse(argv[argc + 3]),

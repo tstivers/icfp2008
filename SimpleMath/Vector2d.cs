@@ -6,6 +6,22 @@ namespace ICFP08
 {
     public struct Vector2d
     {
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() ^ y.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return ((Vector2d)obj).x == this.x &&
+                ((Vector2d)obj).y == this.y;
+        }
+
+        public override string ToString()
+        {
+            return "<" + x.ToString() + ", " + y.ToString() + ">";
+        }
+
         public Vector2d(float x, float y)
         {
             this.x = x;
