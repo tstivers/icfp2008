@@ -69,49 +69,31 @@ namespace ICFP08
             for(num_tries = 0; num_tries < m_maxTries; num_tries++)
             {
                 float angle_offset = (float)num_tries * m_avoidAngle;
-                if (m_pendingTurn != TurnType.HardLeft && // avoid swapping directions
-                    !HitsSomething(m_desiredHeading + angle_offset)) // check right
+                if (!HitsSomething(m_desiredHeading + angle_offset)) // check right
                 {
                     m_desiredHeading += angle_offset;
                     break;
                 }
-                if (m_pendingTurn != TurnType.HardRight && // avoid swapping directions
-                    !HitsSomething(m_desiredHeading - angle_offset)) // check left
+                if (!HitsSomething(m_desiredHeading - angle_offset)) // check left
                 {
                     m_desiredHeading -= angle_offset;
                     break;
                 }                
             }
 
-            if (num_tries == m_maxTries && m_pendingTurn != TurnType.Straight) // try again, ignore current turn
-            {
-                for (num_tries = 0; num_tries < m_maxTries; num_tries++)
-                {
-                    float angle_offset = (float)num_tries * m_avoidAngle;
-                    if (!HitsSomething(m_desiredHeading + angle_offset)) // check right
-                    {
-                        m_desiredHeading += angle_offset;
-                        break;
-                    }
-                    if (!HitsSomething(m_desiredHeading - angle_offset)) // check left
-                    {
-                        m_desiredHeading -= angle_offset;
-                        break;
-                    }
-                }
-            }
-
             if (num_tries == m_maxTries) // PANIC : at worst we'll crash
             {
                 Log("PANIC");
-                MoveType t = m_world.Rover.Speed > m_minBrakeSpeed ? MoveType.Brake : MoveType.Accelerate;
-                m_pendingTurn = TurnType.HardRight;
-                m_server.SendCommand(t, TurnType.Right);
-                m_server.SendCommand(t, TurnType.Right);
-                m_server.SendCommand(t, TurnType.Right);
-                m_server.SendCommand(t, TurnType.Right);
+                //MoveType t = m_world.Rover.Speed > m_minBrakeSpeed ? MoveType.Brake : MoveType.Accelerate;
+                MoveType mt = MoveType.Brake;
+                TurnType tt = (m_pendingTurn == TurnType.Right) || (m_pendingTurn == TurnType.HardRight) ? 
+                    TurnType.HardRight : TurnType.HardLeft;
+                m_pendingTurn = tt;
+                m_server.SendCommand(mt, tt);
+                m_server.SendCommand(mt, tt);
+                m_server.SendCommand(mt, tt);
+                m_server.SendCommand(mt, tt);
             }
-
             
             float turn_angle = m_desiredHeading - m_world.Rover.Direction;
             if (turn_angle > 180.0f)
@@ -130,9 +112,6 @@ namespace ICFP08
                             MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
                             if (gas == MoveType.Brake)
                                 Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
-                            else
-                                if (Math.Abs(turn_angle) > m_brakeAngle && m_world.Rover.Speed > m_minBrakeSpeed) // slow down when making super-sharp turns
-                                    gas = MoveType.Brake;
                             m_server.SendCommand(gas, TurnType.Right);
                             m_server.SendCommand(gas, TurnType.Right);
                             m_server.SendCommand(gas, TurnType.Right);
@@ -174,9 +153,6 @@ namespace ICFP08
                             MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
                             if (gas == MoveType.Brake)
                                 Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
-                            else
-                                if (Math.Abs(turn_angle) > m_brakeAngle && m_world.Rover.Speed > m_minBrakeSpeed) // slow down to make super-sharp turns
-                                    gas = MoveType.Brake;
                             m_server.SendCommand(gas, TurnType.Left);
                             m_server.SendCommand(gas, TurnType.Left);
                             m_server.SendCommand(gas, TurnType.Left);
