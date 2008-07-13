@@ -19,12 +19,10 @@ namespace ICFP08
         private Vector2d m_target;
         private float m_desiredHeading;
         private float m_minAngle = 1.0f;
-        private float m_fastAngle = 20.0f;
-        private float m_brakeAngle = 60.0f; // the angle at which we decelerate
-        private float m_minBrakeSpeed = 8.0f; // assuming we are going faster than this
-        private int m_maxTries = 18; // number of times to try and find a non-colliding heading
-        private float m_avoidAngle = 5.0f;
-        private int m_turnStop = 0; // used to time a turn
+        private float m_fastAngle = 10.0f;
+        private int m_maxTries = 45; // number of times to try and find a non-colliding heading
+        private float m_brakeSpeed = 80.0f;
+        private float m_avoidAngle = 1.0f;
         private TurnType m_pendingTurn = TurnType.Straight;
 
         public override Vector2d CurrentTarget
@@ -68,65 +66,56 @@ namespace ICFP08
 
             // calc max distance for collisions
             float target_distance = (m_world.Rover.Position - m_target).length();
-            float max_distance = Math.Min(target_distance, m_world.Rover.Speed * 3.0f);            
+            //float max_distance = Math.Min(target_distance, m_world.Rover.Speed * 5.0f);
+            float max_distance = target_distance;
 
             // check for critical collisions on our current trajectory
-            MarsObject critical_obj = null;
-            float critical_dist = NearestObject(m_world.Rover.Direction, max_distance, ref critical_obj);
+            //MarsObject critical_obj = null;
+            //float critical_dist = NearestObject(m_world.Rover.Direction, max_distance, ref critical_obj);
 
             // figure out a desired trajectory that doesn't run into anything
+            float segments = max_distance / 10;         
             int num_tries = 0;
-            for (num_tries = 0; num_tries < m_maxTries; num_tries++)
+            do
             {
-                float angle_offset = (float)num_tries * m_avoidAngle;
-                MarsObject nearest_obj = null;
-
-                if(float.MaxValue == NearestObject(m_desiredHeading + angle_offset, max_distance, ref nearest_obj)) // check right
+                for (num_tries = 0; num_tries < m_maxTries; num_tries++)
                 {
-                    m_desiredHeading += angle_offset;
-                    break;
+                    float angle_offset = (float)num_tries * m_avoidAngle;
+                    MarsObject nearest_obj = null;
+
+                    if (float.MaxValue == NearestObject(m_desiredHeading + angle_offset, max_distance, ref nearest_obj)) // check right
+                    {
+                        m_desiredHeading += angle_offset;
+                        break;
+                    }
+
+                    if (float.MaxValue == NearestObject(m_desiredHeading - angle_offset, max_distance, ref nearest_obj)) // check left
+                    {
+                        m_desiredHeading -= angle_offset;
+                        break;
+                    }
                 }
+                if (max_distance > 3.0f)
+                    max_distance = 3.0f;
+                else
+                    max_distance = 0.0f;
+            } while (num_tries == m_maxTries && max_distance > 0.0f);
 
-                if(float.MaxValue == NearestObject(m_desiredHeading - angle_offset, max_distance, ref nearest_obj)) // check left
-                {
-                    m_desiredHeading -= angle_offset;
-                    break;
-                }
-            }
-
-            // if we fail to find a decent trajectory, just keep going the way we're going and
-            // rely on the critical avoidance to keep us safe while we look for a new trajectory
-            if (num_tries == m_maxTries)
-                m_desiredHeading = m_world.Rover.Direction;
-
-            if (critical_obj != null) // it's coming right at us!
+            // couldn't find a heading that doesn't run into anything, panic
+            if (num_tries == m_maxTries) // PANIC : at worst we'll crash
             {
-                DrawDebugEllipse(critical_obj, Brushes.Yellow);
-                //DrawDebugRay(m_world.Rover.Position, m_desiredHeading, max_distance, Pens.Red);
-                //DrawDebugRay(m_world.Rover.Position, m_world.Rover.Direction, max_distance, Pens.Yellow);
-                m_desiredHeading = FindBestHeadingWhileAvoidingThis(critical_obj, critical_dist);
-                DrawDebugRay(m_world.Rover.Position, m_desiredHeading, max_distance, Pens.Green);
-                DrawDebugRay(m_world.Rover.Position, m_world.Rover.Direction, max_distance, Pens.Yellow);
+                Log("PANIC");
+                //MoveType t = m_world.Rover.Speed > m_minBrakeSpeed ? MoveType.Brake : MoveType.Accelerate;
+                MoveType mt = MoveType.Brake;
+                TurnType tt = (m_pendingTurn == TurnType.Right) || (m_pendingTurn == TurnType.HardRight) ?
+                    TurnType.HardRight : TurnType.HardLeft;
+                m_pendingTurn = tt;
+                m_server.SendCommand(mt, tt);
+                m_server.SendCommand(mt, tt);
+                m_server.SendCommand(mt, tt);
+                m_server.SendCommand(mt, tt);
+                return;
             }
-            else // not in immediate danger
-            {             
-                //DrawDebugRay(m_world.Rover.Position, m_desiredHeading, max_distance, Pens.Blue);
-                //DrawDebugRay(m_world.Rover.Position, m_world.Rover.Direction, max_distance, Pens.Green);                
-            }
-
-            //if (num_tries == m_maxTries) // PANIC : at worst we'll crash
-            //{
-            //    Log("PANIC");
-            //    //MoveType t = m_world.Rover.Speed > m_minBrakeSpeed ? MoveType.Brake : MoveType.Accelerate;
-            //    MoveType mt = MoveType.Brake;
-            //    TurnType tt = (m_pendingTurn == TurnType.Right) || (m_pendingTurn == TurnType.HardRight) ? 
-            //        TurnType.HardRight : TurnType.HardLeft;
-            //    m_pendingTurn = tt;
-            //    m_server.SendCommand(mt, tt);
-            //    m_server.SendCommand(mt, tt);
-            //    m_server.SendCommand(mt, tt);
-            //    m_server.SendCommand(mt, tt);
-            //}
             
             float turn_angle = m_desiredHeading - m_world.Rover.Direction;
             if (turn_angle > 180.0f)
@@ -139,18 +128,17 @@ namespace ICFP08
                 {
                     if (Math.Abs(turn_angle) > m_fastAngle) // turn hard
                     {
-                        if (m_pendingTurn != TurnType.HardRight || !(offset.length() < m_world.Rover.Speed))
-                        {
-                            // avoid the SPIRAL OF DEATH
-                            MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
-                            if (gas == MoveType.Brake)
-                                Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
-                            m_server.SendCommand(gas, TurnType.Right);
-                            m_server.SendCommand(gas, TurnType.Right);
-                            m_server.SendCommand(gas, TurnType.Right);
-                            m_server.SendCommand(gas, TurnType.Right);
-                            m_pendingTurn = TurnType.HardRight;
-                        }
+                        // avoid the SPIRAL OF DEATH
+                        MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
+                        if (gas == MoveType.Brake)
+                            Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
+                        if (m_world.Rover.Speed > m_brakeSpeed)
+                            gas = MoveType.Brake;
+                        m_server.SendCommand(gas, TurnType.Right);
+                        m_server.SendCommand(gas, TurnType.Right);
+                        m_server.SendCommand(gas, TurnType.Right);
+                        m_server.SendCommand(gas, TurnType.Right);
+                        m_pendingTurn = TurnType.HardRight;
                     }
                     else
                     {
@@ -180,18 +168,17 @@ namespace ICFP08
                 {
                     if (Math.Abs(turn_angle) > m_fastAngle) // turn hard
                     {
-                        if (m_pendingTurn != TurnType.HardLeft || !(offset.length() < m_world.Rover.Speed))
-                        {
-                            // avoid the SPIRAL OF DEATH
-                            MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
-                            if (gas == MoveType.Brake)
-                                Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
-                            m_server.SendCommand(gas, TurnType.Left);
-                            m_server.SendCommand(gas, TurnType.Left);
-                            m_server.SendCommand(gas, TurnType.Left);
-                            m_server.SendCommand(gas, TurnType.Left);
-                            m_pendingTurn = TurnType.HardLeft;
-                        }
+                        // avoid the SPIRAL OF DEATH
+                        MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
+                        if (gas == MoveType.Brake)
+                            Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
+                        if (m_world.Rover.Speed > m_brakeSpeed)
+                            gas = MoveType.Brake;
+                        m_server.SendCommand(gas, TurnType.Left);
+                        m_server.SendCommand(gas, TurnType.Left);
+                        m_server.SendCommand(gas, TurnType.Left);
+                        m_server.SendCommand(gas, TurnType.Left);
+                        m_pendingTurn = TurnType.HardLeft;
                     }
                     else
                     {
@@ -265,7 +252,7 @@ namespace ICFP08
             float closest_range = float.MaxValue;
 
             foreach (Boulder b in m_world.Boulders)
-                if (b.IntersectsLine(m_world.Rover.Position, end, 0.5f))
+                if (b.IntersectsLine(m_world.Rover.Position, end, 1.0f))
                 {
                     //DrawDebugEllipse(b, Brushes.Yellow);
                     if ((m_world.Rover.Position - b.Position).length() - b.Radius < closest_range)
@@ -276,7 +263,7 @@ namespace ICFP08
                 }
 
             foreach (Crater c in m_world.Craters)
-                if (c.IntersectsLine(m_world.Rover.Position, end, 0.5f))
+                if (c.IntersectsLine(m_world.Rover.Position, end, 1.0f))
                 {
                     //DrawDebugEllipse(c, Brushes.Yellow);
                     if ((m_world.Rover.Position - c.Position).length() - c.Radius < closest_range)
@@ -287,7 +274,7 @@ namespace ICFP08
                 }            
 
             foreach (Martian m in m_world.Martians)
-                if (m.IntersectsLine(m_world.Rover.Position, end, 0.5f)) // give martians a wide berth
+                if (m.IntersectsLine(m_world.Rover.Position, end, 5.0f)) // give martians a wide berth
                 {
                     //DrawDebugEllipse(m, Brushes.Yellow);
                     if ((m_world.Rover.Position - m.Position).length() - m.Radius < closest_range)
@@ -299,7 +286,7 @@ namespace ICFP08
 
             if (closest_range == float.MaxValue)
             {
-                //DrawDebugLine(m_world.Rover.Position, m_world.Rover.Position + (-max_dist * angle), Pens.Blue);
+                DrawDebugLine(m_world.Rover.Position, m_world.Rover.Position + (-max_dist * angle), Pens.Green);
             }
 
             return closest_range;

@@ -55,6 +55,7 @@ namespace ICFP08
         void m_wrapper_EndOfRunMessage(object sender, EndOfRunMessageEventArgs ee)
         {
             AddMessage("[wrapper] Run ended: Score " + ee.score);
+            m_worldState.ResetWorldState();
         }
 
         public void AddMessage(string message)
@@ -87,6 +88,8 @@ namespace ICFP08
 
         void m_wrapper_TelemetryMessage(object sender, TelemetryMessageEventArgs tme)
         {
+            if(!((m_worldState.Rover.Position.x == 0.0f) && (m_worldState.Rover.Position.y == 0.0f)))
+                worldVisualizer.DrawLine(m_worldState.Rover.Position, tme.message.position, Pens.Transparent);
             m_worldState.UpdateWorldState(tme.message);
             m_controller.DoUpdate();
             numericStatus.X = tme.message.position.x;

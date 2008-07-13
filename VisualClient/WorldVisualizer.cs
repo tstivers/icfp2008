@@ -345,8 +345,10 @@ namespace ICFP08
 
         private void DrawRover(Rover r, Graphics g)
         {
+            // cheat and draw the rover twice as large as it should be
+            MarsObject obj = new MarsObject(r.Position, r.Radius * 4);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            Rectangle rect = GetObjectRect(r);
+            Rectangle rect = GetObjectRect(obj);
             g.FillEllipse(m_roverBrush, rect);
             g.DrawEllipse(m_borderPen, rect);
         }
@@ -363,7 +365,15 @@ namespace ICFP08
             start = WorldToClient(start);
             end = WorldToClient(end);
 
-            m_debugLines.Add(new Line(start, end, p));
+            if (p == Pens.Transparent)
+            {
+                using (Graphics g = Graphics.FromImage(m_staticBG))
+                {
+                    g.DrawLine(Pens.Blue, start, end);
+                }
+            }
+            else
+                m_debugLines.Add(new Line(start, end, p));
         }
 
         public void DrawEllipse(MarsObject obj, Brush b)

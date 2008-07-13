@@ -37,6 +37,7 @@ namespace ICFP08
             // compassBox
             // 
             this.compassBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.compassBox.Image = global::ICFP08.Properties.Resources.compass;
             this.compassBox.Location = new System.Drawing.Point(0, 0);
             this.compassBox.Name = "compassBox";
             this.compassBox.Size = new System.Drawing.Size(150, 150);

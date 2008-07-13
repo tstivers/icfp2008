@@ -394,5 +394,10 @@ namespace ICFP08
             if (ObjectFound != null)
                 ObjectFound(this, o);
         }
+
+        public void ResetWorldState()
+        {
+            m_rover.UpdateState(new Vector2d(), 0, 0, MoveType.Roll, TurnType.Straight);
+        }
     }
 }

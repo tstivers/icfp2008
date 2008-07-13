@@ -246,6 +246,7 @@ namespace ICFP08
             this.worldVisualizer.GridSize = new System.Drawing.Size(20, 20);
             this.worldVisualizer.HomeColor = System.Drawing.Color.Green;
             this.worldVisualizer.Location = new System.Drawing.Point(0, 0);
+            this.worldVisualizer.MartianColor = System.Drawing.Color.Purple;
             this.worldVisualizer.Name = "worldVisualizer";
             this.worldVisualizer.RoverColor = System.Drawing.Color.Blue;
             this.worldVisualizer.Size = new System.Drawing.Size(561, 357);
@@ -257,7 +258,7 @@ namespace ICFP08
             this.numericStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericStatus.Location = new System.Drawing.Point(3, 3);
             this.numericStatus.Name = "numericStatus";
-            this.numericStatus.Size = new System.Drawing.Size(187, 105);
+            this.numericStatus.Size = new System.Drawing.Size(178, 105);
             this.numericStatus.TabIndex = 0;
             // 
             // roverControlStatus1
