@@ -16,9 +16,9 @@ namespace ICFP08
         }
         private Vector2d m_target;
         private float m_desiredHeading;
-        private float m_minAngle = 5.0f;
-        private float m_fastAngle = 45.0f;
-        private int m_maxTries = 5;
+        private float m_minAngle = 0.1f;
+        private float m_fastAngle = 15.0f;
+        private int m_maxTries = 18; // search 90 degrees each way
         private float m_avoidAngle = 5.0f;
         private int m_turnStop = 0; // used to time a turn
         private TurnType m_pendingTurn = TurnType.Straight;
@@ -63,11 +63,19 @@ namespace ICFP08
                 m_desiredHeading -= 360.0f;
 
             // check for potential collisions
-            int num_tries = 0;
-            while(num_tries < m_maxTries && HitsSomething(m_desiredHeading))
+            for(int num_tries = 0; num_tries < m_maxTries; num_tries++)
             {
-                m_desiredHeading += m_avoidAngle; // always turn right atm
-                num_tries++;
+                float angle_offset = (float)num_tries * m_avoidAngle;
+                if (!HitsSomething(m_desiredHeading + angle_offset)) // check right
+                {
+                    m_desiredHeading += angle_offset;
+                    break;
+                }
+                if (!HitsSomething(m_desiredHeading - angle_offset)) // check left
+                {
+                    m_desiredHeading -= angle_offset;
+                    break;
+                }                
             }
 
             float turn_angle = m_desiredHeading - m_world.Rover.Direction;
@@ -174,11 +182,11 @@ namespace ICFP08
             //DrawDebugLine(m_world.Rover.Position, end);
 
             foreach (Boulder b in m_world.Boulders)
-                if (b.IntersectsLine(m_world.Rover.Position, end, m_world.Rover.Radius))
+                if (b.IntersectsLine(m_world.Rover.Position, end, 1.0f))
                     return true;
 
             foreach (Crater c in m_world.Craters)
-                if (c.IntersectsLine(m_world.Rover.Position, end, m_world.Rover.Radius))
+                if (c.IntersectsLine(m_world.Rover.Position, end, 1.0f))
                     return true;
 
             return false;

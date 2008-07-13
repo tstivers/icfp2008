@@ -367,8 +367,14 @@ namespace ICFP08
         {
             SocketState so = (SocketState)ar.AsyncState;
             Socket s = so.workSocket;
-
-            int read = s.EndReceive(ar);
+            int read = 0;
+            try
+            {
+                read = s.EndReceive(ar);
+            }
+            catch (Exception)
+            { 
+            }
 
             if (read > 0)
             {
