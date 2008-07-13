@@ -12,6 +12,7 @@ namespace ICFP08
     {
         private float m_angle = 0.0f;
         private float m_wanted = 0.0f;
+        private float m_offset = 0.0f;
 
         public float Direction
         {
@@ -27,6 +28,16 @@ namespace ICFP08
             set
             {
                 m_wanted = value;
+                compassBox.Invalidate();
+            }
+        }
+
+        public float OffsetAngle
+        {
+            set
+            {
+                m_offset = value;
+                offsetLabel.Text = m_offset.ToString();
                 compassBox.Invalidate();
             }
         }

@@ -139,7 +139,7 @@ namespace ICFP08
     public class Martian : MobileObject
     {
         public Martian(Vector2d position, float direction, float speed) 
-            : base(position, direction, speed, 0.25f)
+            : base(position, direction, speed, 2.5f) // oversize martians because they're scary BUT DON'T OVERDO IT
         {
         }
     }

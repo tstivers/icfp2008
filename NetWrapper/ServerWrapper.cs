@@ -154,7 +154,8 @@ namespace ICFP08
 
         public void Disconnect()
         {
-            m_socket.Disconnect(false);
+            if(m_socket.Connected)
+                m_socket.Disconnect(false);
         }
 
         public void ProcessMessages()
@@ -360,7 +361,13 @@ namespace ICFP08
             SocketState s = new SocketState();
             s.workSocket = m_socket;
             s.wrapper = this;
-            m_socket.BeginReceive(s.buffer, 0, SocketState.BUFFER_SIZE, 0, new AsyncCallback(Read_Callback), s);
+            try
+            {
+                m_socket.BeginReceive(s.buffer, 0, SocketState.BUFFER_SIZE, 0, new AsyncCallback(Read_Callback), s);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private static void Read_Callback(IAsyncResult ar)

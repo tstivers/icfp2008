@@ -95,6 +95,12 @@ namespace ICFP08
             numericStatus.Direction = tme.message.direction;
             compassControl.Direction = tme.message.direction;
             compassControl.WantedAngle = m_controller.DesiredHeading;
+            float turn_angle = m_controller.DesiredHeading - m_worldState.Rover.Direction;
+            if (turn_angle > 180.0f)
+                turn_angle = -360.0f + turn_angle;
+            if (turn_angle < -180.0f)
+                turn_angle = 360.0f + turn_angle;
+            compassControl.OffsetAngle = turn_angle;
             roverControlStatus1.MoveState = tme.message.move_state;
             roverControlStatus1.TurnState = tme.message.turn_state;
             timeLabel.Text = tme.message.time_stamp.ToString();
@@ -107,6 +113,12 @@ namespace ICFP08
             worldVisualizer.State = m_worldState;
             m_controller = new StupidController(m_worldState, m_wrapper);
             m_controller.DebugLine += new RoverController.DebugLineHandler(m_controller_DebugLine);
+            m_controller.LogMessage += new RoverController.LogMessageHandler(m_controller_LogMessage);
+        }
+
+        void m_controller_LogMessage(string message)
+        {
+            AddMessage("[controller] " + message);
         }
 
         void m_controller_DebugLine(Vector2d start, Vector2d end)

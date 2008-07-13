@@ -16,6 +16,8 @@ namespace ICFP08
         private SolidBrush m_craterBrush = new SolidBrush(Color.Red);
         private SolidBrush m_homeBrush = new SolidBrush(Color.Green);
         private SolidBrush m_roverBrush = new SolidBrush(Color.Blue);
+        private SolidBrush m_martianBrush = new SolidBrush(Color.Purple); // makes them less threatening
+
         private Pen m_gridPen = new Pen(Color.Black);
         private Pen m_borderPen = new Pen(Color.Black);
         private int m_gridSizeX = 20;
@@ -107,7 +109,6 @@ namespace ICFP08
                 UpdateBackground();
             }
         }
-
         [Category("Grid")]
         public Size GridSize
         {
@@ -122,7 +123,6 @@ namespace ICFP08
                 UpdateBackground();
             }
         }
-
         [Category("Objects")]
         public Color BoulderColor
         {
@@ -137,7 +137,6 @@ namespace ICFP08
                 UpdateBackground();
             }
         }
-
         [Category("Objects")]
         public Color CraterColor
         {
@@ -152,7 +151,6 @@ namespace ICFP08
                 UpdateBackground();
             }
         }
-
         [Category("Objects")]
         public Color HomeColor
         {
@@ -167,7 +165,6 @@ namespace ICFP08
                 UpdateBackground();
             }
         }
-        
         [Category("Objects")]
         public Color RoverColor
         {
@@ -181,6 +178,19 @@ namespace ICFP08
                 m_roverBrush = new SolidBrush(value);
             }
         }
+        [Category("Objects")]
+        public Color MartianColor
+        {
+            get
+            {
+                return m_martianBrush.Color;
+            }
+            set
+            {
+                m_martianBrush.Dispose();
+                m_martianBrush = new SolidBrush(value);
+            }
+        }
 
         protected override void OnPaint(PaintEventArgs pe)
         {
@@ -188,6 +198,8 @@ namespace ICFP08
             if(m_state != null)
             {
                 DrawRover(m_state.Rover, pe.Graphics);
+                foreach (Martian m in m_state.Martians)
+                    DrawMartian(m, pe.Graphics);
             }
             //base.OnPaint(pe);            
         }
@@ -299,6 +311,13 @@ namespace ICFP08
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             Rectangle rect = GetObjectRect(r);
             g.FillEllipse(m_roverBrush, rect);
+            g.DrawEllipse(m_borderPen, rect);
+        }
+
+        private void DrawMartian(Martian m, Graphics g)
+        {
+            Rectangle rect = GetObjectRect(m);
+            g.FillEllipse(m_martianBrush, rect);
             g.DrawEllipse(m_borderPen, rect);
         }
 

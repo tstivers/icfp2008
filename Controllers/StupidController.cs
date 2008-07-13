@@ -16,9 +16,11 @@ namespace ICFP08
         }
         private Vector2d m_target;
         private float m_desiredHeading;
-        private float m_minAngle = 0.1f;
+        private float m_minAngle = 2.0f;
         private float m_fastAngle = 15.0f;
-        private int m_maxTries = 18; // search 90 degrees each way
+        private float m_brakeAngle = 60.0f; // the angle at which we decelerate
+        private float m_minBrakeSpeed = 8.0f; // assuming we are going faster than this
+        private int m_maxTries = 10; // number of times to try and find a non-colliding heading
         private float m_avoidAngle = 5.0f;
         private int m_turnStop = 0; // used to time a turn
         private TurnType m_pendingTurn = TurnType.Straight;
@@ -63,24 +65,59 @@ namespace ICFP08
                 m_desiredHeading -= 360.0f;
 
             // check for potential collisions
-            for(int num_tries = 0; num_tries < m_maxTries; num_tries++)
+            int num_tries;
+            for(num_tries = 0; num_tries < m_maxTries; num_tries++)
             {
                 float angle_offset = (float)num_tries * m_avoidAngle;
-                if (!HitsSomething(m_desiredHeading + angle_offset)) // check right
+                if (m_pendingTurn != TurnType.HardLeft && // avoid swapping directions
+                    !HitsSomething(m_desiredHeading + angle_offset)) // check right
                 {
                     m_desiredHeading += angle_offset;
                     break;
                 }
-                if (!HitsSomething(m_desiredHeading - angle_offset)) // check left
+                if (m_pendingTurn != TurnType.HardRight && // avoid swapping directions
+                    !HitsSomething(m_desiredHeading - angle_offset)) // check left
                 {
                     m_desiredHeading -= angle_offset;
                     break;
                 }                
             }
 
+            if (num_tries == m_maxTries && m_pendingTurn != TurnType.Straight) // try again, ignore current turn
+            {
+                for (num_tries = 0; num_tries < m_maxTries; num_tries++)
+                {
+                    float angle_offset = (float)num_tries * m_avoidAngle;
+                    if (!HitsSomething(m_desiredHeading + angle_offset)) // check right
+                    {
+                        m_desiredHeading += angle_offset;
+                        break;
+                    }
+                    if (!HitsSomething(m_desiredHeading - angle_offset)) // check left
+                    {
+                        m_desiredHeading -= angle_offset;
+                        break;
+                    }
+                }
+            }
+
+            if (num_tries == m_maxTries) // PANIC : at worst we'll crash
+            {
+                Log("PANIC");
+                MoveType t = m_world.Rover.Speed > m_minBrakeSpeed ? MoveType.Brake : MoveType.Accelerate;
+                m_pendingTurn = TurnType.HardRight;
+                m_server.SendCommand(t, TurnType.Right);
+                m_server.SendCommand(t, TurnType.Right);
+                m_server.SendCommand(t, TurnType.Right);
+                m_server.SendCommand(t, TurnType.Right);
+            }
+
+            
             float turn_angle = m_desiredHeading - m_world.Rover.Direction;
             if (turn_angle > 180.0f)
                 turn_angle = -360.0f + turn_angle;
+            if (turn_angle < -180.0f)
+                turn_angle = 360.0f - turn_angle;
             if (Math.Abs(turn_angle) > m_minAngle) // need to execute a turn
             {
                 if (turn_angle > 0.0f) // need to turn right
@@ -89,10 +126,17 @@ namespace ICFP08
                     {
                         if (m_pendingTurn != TurnType.HardRight)
                         {
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Right);
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Right);
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Right);
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Right);
+                            // avoid the SPIRAL OF DEATH
+                            MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
+                            if (gas == MoveType.Brake)
+                                Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
+                            else
+                                if (Math.Abs(turn_angle) > m_brakeAngle && m_world.Rover.Speed > m_minBrakeSpeed) // slow down when making super-sharp turns
+                                    gas = MoveType.Brake;
+                            m_server.SendCommand(gas, TurnType.Right);
+                            m_server.SendCommand(gas, TurnType.Right);
+                            m_server.SendCommand(gas, TurnType.Right);
+                            m_server.SendCommand(gas, TurnType.Right);
                             m_pendingTurn = TurnType.HardRight;
                         }
                     }
@@ -126,10 +170,17 @@ namespace ICFP08
                     {
                         if (m_pendingTurn != TurnType.HardLeft)
                         {
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Left);
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Left);
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Left);
-                            m_server.SendCommand(MoveType.Accelerate, TurnType.Left);
+                            // avoid the SPIRAL OF DEATH
+                            MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
+                            if (gas == MoveType.Brake)
+                                Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
+                            else
+                                if (Math.Abs(turn_angle) > m_brakeAngle && m_world.Rover.Speed > m_minBrakeSpeed) // slow down to make super-sharp turns
+                                    gas = MoveType.Brake;
+                            m_server.SendCommand(gas, TurnType.Left);
+                            m_server.SendCommand(gas, TurnType.Left);
+                            m_server.SendCommand(gas, TurnType.Left);
+                            m_server.SendCommand(gas, TurnType.Left);
                             m_pendingTurn = TurnType.HardLeft;
                         }
                     }
@@ -188,6 +239,12 @@ namespace ICFP08
             foreach (Crater c in m_world.Craters)
                 if (c.IntersectsLine(m_world.Rover.Position, end, 1.0f))
                     return true;
+
+            foreach (Martian m in m_world.Martians)
+                if (m.IntersectsLine(m_world.Rover.Position, end, 1.0f)) // give martians a wide berth
+                    return true;
+
+            //DrawDebugLine(m_world.Rover.Position, end);
 
             return false;
         }
