@@ -12,18 +12,49 @@ namespace ICFP08
     {
         private ServerWrapper m_wrapper = new ServerWrapper();
         private Timer m_timer = new Timer();
-        private WorldState m_worldState; 
+        private WorldState m_worldState;
+        private RoverController m_controller;
 
         public ClientForm()
         {
             InitializeComponent();
             m_wrapper.InitializationMessage += new ServerWrapper.InitializationMessageEventHandler(m_wrapper_InitializationMessage);
             m_wrapper.TelemetryMessage += new ServerWrapper.TelemetryMessageEventHandler(m_wrapper_TelemetryMessage);
+            m_wrapper.EndOfRunMessage += new ServerWrapper.EndOfRunMessageEventHandler(m_wrapper_EndOfRunMessage);
+            m_wrapper.KilledMessage += new ServerWrapper.EventMessageEventHandler(m_wrapper_KilledMessage);
+            m_wrapper.SuccessMessage += new ServerWrapper.EventMessageEventHandler(m_wrapper_SuccessMessage);
+            m_wrapper.CraterMessage += new ServerWrapper.EventMessageEventHandler(m_wrapper_CraterMessage);
+            m_wrapper.CrashMessage += new ServerWrapper.EventMessageEventHandler(m_wrapper_CrashMessage);
             m_timer.Interval = 1;
             m_timer.Tick += new EventHandler(m_timer_Tick);
             m_timer.Start();
             roverControlStatus1.WantedMoveChanged += new RoverControlStatus.WantedMoveChangedHandler(roverControlStatus1_WantedMoveChanged);
             roverControlStatus1.WantedTurnChanged += new RoverControlStatus.WantedTurnChangedHandler(roverControlStatus1_WantedTurnChanged);
+        }
+
+        void m_wrapper_CrashMessage(object sender, EventMessageEventArgs ae)
+        {
+            AddMessage("[wrapper] Rover hit a boulder/border!");
+        }
+
+        void m_wrapper_CraterMessage(object sender, EventMessageEventArgs ae)
+        {
+            AddMessage("[wrapper] Fell into a crater!");
+        }
+
+        void m_wrapper_SuccessMessage(object sender, EventMessageEventArgs ae)
+        {
+            AddMessage("[wrapper] Successfully made it home!");
+        }
+
+        void m_wrapper_KilledMessage(object sender, EventMessageEventArgs ae)
+        {
+            AddMessage("[wrapper] Killed by a martian!");
+        }
+
+        void m_wrapper_EndOfRunMessage(object sender, EndOfRunMessageEventArgs ee)
+        {
+            AddMessage("[wrapper] Run ended: Score " + ee.score);
         }
 
         public void AddMessage(string message)
@@ -57,11 +88,13 @@ namespace ICFP08
         void m_wrapper_TelemetryMessage(object sender, TelemetryMessageEventArgs tme)
         {
             m_worldState.UpdateWorldState(tme.message);
+            m_controller.DoUpdate();
             numericStatus.X = tme.message.position.x;
             numericStatus.Y = tme.message.position.y;
             numericStatus.Speed = tme.message.speed;
             numericStatus.Direction = tme.message.direction;
             compassControl.Direction = tme.message.direction;
+            compassControl.WantedAngle = m_controller.DesiredHeading;
             roverControlStatus1.MoveState = tme.message.move_state;
             roverControlStatus1.TurnState = tme.message.turn_state;
             timeLabel.Text = tme.message.time_stamp.ToString();
@@ -72,6 +105,13 @@ namespace ICFP08
             AddMessage("[wrapper] received init message (" + ime.message.size.Width + ", " + ime.message.size.Height + ")");
             m_worldState = new WorldState(ime.message);
             worldVisualizer.State = m_worldState;
+            m_controller = new StupidController(m_worldState, m_wrapper);
+            m_controller.DebugLine += new RoverController.DebugLineHandler(m_controller_DebugLine);
+        }
+
+        void m_controller_DebugLine(Vector2d start, Vector2d end)
+        {
+            worldVisualizer.DrawLine(start, end);
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)

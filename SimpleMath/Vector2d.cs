@@ -38,7 +38,7 @@ namespace ICFP08
             return angle(new Vector2d(0, 1));
         }
 
-        private double dot(Vector2d other)
+        public float dot(Vector2d other)
         {
             return (this.x * other.x) + (this.y * other.y);
         }
@@ -52,6 +52,21 @@ namespace ICFP08
         public float length()
         {
  	        return (float)(Math.Sqrt((x * x) + (y * y)));
+        }
+
+        public static Vector2d operator +(Vector2d v1, Vector2d v2)
+        {
+            return new Vector2d(v1.x + v2.x, v1.y + v2.y);
+        }
+
+        public static Vector2d operator -(Vector2d v1, Vector2d v2)
+        {
+            return new Vector2d(v1.x - v2.x, v1.y - v2.y);
+        }
+
+        public static Vector2d operator *(float f, Vector2d v)
+        {
+            return new Vector2d(v.x * f, v.y * f);
         }
 
         public float x;

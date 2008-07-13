@@ -1,6 +1,6 @@
 namespace ICFP08
 {
-    partial class CompassControl
+    partial class ControllerChooser
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,34 +28,43 @@ namespace ICFP08
         /// </summary>
         private void InitializeComponent()
         {
-            this.compassBox = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.compassBox)).BeginInit();
+            this.label1 = new System.Windows.Forms.Label();
+            this.controllerBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
-            // compassBox
+            // label1
             // 
-            this.compassBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.compassBox.Location = new System.Drawing.Point(0, 0);
-            this.compassBox.Name = "compassBox";
-            this.compassBox.Size = new System.Drawing.Size(150, 150);
-            this.compassBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.compassBox.TabIndex = 0;
-            this.compassBox.TabStop = false;
-            this.compassBox.Paint += new System.Windows.Forms.PaintEventHandler(this.compassBox_Paint);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Controller:";
             // 
-            // CompassControl
+            // controllerBox
+            // 
+            this.controllerBox.FormattingEnabled = true;
+            this.controllerBox.Location = new System.Drawing.Point(63, 15);
+            this.controllerBox.Name = "controllerBox";
+            this.controllerBox.Size = new System.Drawing.Size(122, 21);
+            this.controllerBox.TabIndex = 1;
+            // 
+            // ControllerChooser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.compassBox);
-            this.Name = "CompassControl";
-            ((System.ComponentModel.ISupportInitialize)(this.compassBox)).EndInit();
+            this.Controls.Add(this.controllerBox);
+            this.Controls.Add(this.label1);
+            this.Name = "ControllerChooser";
+            this.Size = new System.Drawing.Size(194, 49);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox compassBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox controllerBox;
     }
 }

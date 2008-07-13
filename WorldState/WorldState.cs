@@ -45,6 +45,19 @@ namespace ICFP08
             }
         }
 
+        public bool IntersectsLine(Vector2d start, Vector2d end, float lineradius)
+        {
+            Vector2d dir = end - start;
+            Vector2d diff = m_position - start;
+            float t = diff.dot(dir) / dir.dot(dir);
+            t = Math.Max(t, 0.0f);
+            t = Math.Min(t, 1.0f);
+            Vector2d closest = start + t * dir;
+            Vector2d d = m_position - closest;
+            float distsqr = d.dot(d);
+            return distsqr <= ((m_radius + lineradius) * (m_radius + lineradius));
+        }
+
         protected Vector2d m_position;
         protected float m_radius;
     }
@@ -97,6 +110,22 @@ namespace ICFP08
             this.m_speed = speed;
             this.m_move_state = move_state;
             this.m_turn_state = turn_state;
+        }
+
+        public MoveType MoveState
+        {
+            get
+            {
+                return m_move_state;
+            }
+        }
+
+        public TurnType TurnState
+        {
+            get
+            {
+                return m_turn_state;
+            }
         }
 
         protected float m_min_sensor;
@@ -203,6 +232,13 @@ namespace ICFP08
                 return m_home;
             }
         }
+        public bool FoundHome
+        {
+            get
+            {
+                return Home != null;
+            }
+        }
 
         public delegate void ObjectHandler(WorldState world, MarsObject obj);
         public delegate void BoulderHandler(WorldState world, Boulder b);
@@ -284,6 +320,12 @@ namespace ICFP08
                 OnMartianSeen(martian);
             }
             OnWorldChanged();
+        }
+
+        public void ForgetStuff()
+        {
+            m_boulders.Clear();
+            m_craters.Clear();
         }
 
         private void OnWorldChanged()

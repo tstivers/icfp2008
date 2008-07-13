@@ -12,7 +12,7 @@ namespace ICFP08
     {
         private WorldState m_state = null;
         private Brush m_backBrush = null;
-        private SolidBrush m_boulderBrush = new SolidBrush(Color.Brown);
+        private SolidBrush m_boulderBrush = new SolidBrush(Color.LightGray);
         private SolidBrush m_craterBrush = new SolidBrush(Color.Red);
         private SolidBrush m_homeBrush = new SolidBrush(Color.Green);
         private SolidBrush m_roverBrush = new SolidBrush(Color.Blue);
@@ -237,6 +237,7 @@ namespace ICFP08
         {
             using (Graphics g = Graphics.FromImage(m_staticBG))
             {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                 Rectangle rect = GetObjectRect(home);
                 g.FillEllipse(m_homeBrush, rect);
                 g.DrawEllipse(m_borderPen, rect);
@@ -247,6 +248,7 @@ namespace ICFP08
         {
             using (Graphics g = Graphics.FromImage(m_staticBG))
             {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                 Rectangle rect = GetObjectRect(c);
                 g.FillEllipse(m_craterBrush, rect);
                 g.DrawEllipse(m_borderPen, rect);
@@ -274,10 +276,18 @@ namespace ICFP08
             return r;
         }
 
+        private Vector2d WorldToClient(Vector2d world)
+        {
+            return new Vector2d(
+                (world.x + m_offset.X) * m_scale.Width,
+                (-world.y + m_offset.Y) * m_scale.Height);
+        }
+
         private void AddBoulder(Boulder b)
         {
             using (Graphics g = Graphics.FromImage(m_staticBG))
             {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                 Rectangle rect = GetObjectRect(b);
                 g.FillEllipse(m_boulderBrush, rect);
                 g.DrawEllipse(m_borderPen, rect);
@@ -286,9 +296,21 @@ namespace ICFP08
 
         private void DrawRover(Rover r, Graphics g)
         {
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             Rectangle rect = GetObjectRect(r);
             g.FillEllipse(m_roverBrush, rect);
             g.DrawEllipse(m_borderPen, rect);
+        }
+
+        internal void DrawLine(Vector2d start, Vector2d end)
+        {
+            start = WorldToClient(start);
+            end = WorldToClient(end);
+
+            using (Graphics g = Graphics.FromImage(m_staticBG))
+            {
+                g.DrawLine(Pens.Red, start.x, start.y, end.x, end.y);
+            }
         }
     }
 }

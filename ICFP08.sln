@@ -37,6 +37,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICFP08", "ICFP08\ICFP08.csp
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controllers", "Controllers\Controllers.csproj", "{FD1FA59F-4CA4-4332-A978-CE48ADD38419}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +73,10 @@ Global
 		{65BFB16F-4E82-413A-BAAD-CE14E8A35241}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65BFB16F-4E82-413A-BAAD-CE14E8A35241}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65BFB16F-4E82-413A-BAAD-CE14E8A35241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD1FA59F-4CA4-4332-A978-CE48ADD38419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD1FA59F-4CA4-4332-A978-CE48ADD38419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD1FA59F-4CA4-4332-A978-CE48ADD38419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD1FA59F-4CA4-4332-A978-CE48ADD38419}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

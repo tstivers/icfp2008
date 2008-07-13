@@ -8,6 +8,9 @@ namespace ConsoleClient
     class Program
     {
         static ServerWrapper s = new ServerWrapper();
+        static WorldState ws;
+        static RoverController rc;
+        static int runs = 0;
 
         static void Main(string[] args)
         {
@@ -15,10 +18,7 @@ namespace ConsoleClient
             s.InitializationMessage += new ServerWrapper.InitializationMessageEventHandler(s_InitializationMessage);
             s.TelemetryMessage += new ServerWrapper.TelemetryMessageEventHandler(s_TelemetryMessage);
             s.EndOfRunMessage += new ServerWrapper.EndOfRunMessageEventHandler(s_EndOfRunMessage);
-            s.KilledMessage += new ServerWrapper.EventMessageEventHandler(s_KilledMessage);
-            s.CrashMessage += new ServerWrapper.EventMessageEventHandler(s_CrashMessage);
-            s.CraterMessage += new ServerWrapper.EventMessageEventHandler(s_CraterMessage);
-            s.Connect("172.16.1.44", 17676);
+            s.Connect(args[0], int.Parse(args[1]));
             while (s.Connected)
             {
                 s.ProcessMessages();
@@ -43,14 +43,23 @@ namespace ConsoleClient
         static void s_EndOfRunMessage(object sender, EndOfRunMessageEventArgs ee)
         {
             Console.WriteLine("Got end of run message! [time = " + ee.time_stamp + ", score = " + ee.score + "]");
+            System.GC.Collect();
+            //ws.ForgetStuff();
+            runs++;
+            if (runs >= 5)
+                s.Disconnect();
         }
 
         static void s_TelemetryMessage(object sender, TelemetryMessageEventArgs tme)
         {
+            ws.UpdateWorldState(tme.message);
+            rc.DoUpdate();
         }
 
         static void s_InitializationMessage(object sender, InitializationMessageEventArgs ime)
         {
+            ws = new WorldState(ime.message);
+            rc = new StupidController(ws, s);
         }
 
         static void s_MessageReceived(object sender, MessageEventArgs me)

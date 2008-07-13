@@ -239,10 +239,12 @@ namespace ICFP08
             // worldVisualizer
             // 
             this.worldVisualizer.BackColor = System.Drawing.SystemColors.Window;
-            this.worldVisualizer.BoulderColor = System.Drawing.Color.Brown;
+            this.worldVisualizer.BoulderColor = System.Drawing.Color.Silver;
+            this.worldVisualizer.CraterColor = System.Drawing.Color.Red;
             this.worldVisualizer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.worldVisualizer.GridColor = System.Drawing.Color.LightGray;
             this.worldVisualizer.GridSize = new System.Drawing.Size(20, 20);
+            this.worldVisualizer.HomeColor = System.Drawing.Color.Green;
             this.worldVisualizer.Location = new System.Drawing.Point(0, 0);
             this.worldVisualizer.Name = "worldVisualizer";
             this.worldVisualizer.RoverColor = System.Drawing.Color.Blue;

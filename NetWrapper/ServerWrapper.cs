@@ -121,6 +121,8 @@ namespace ICFP08
                 IPEndPoint ipe = new IPEndPoint(address, port);
                 Socket tempSocket =
                     new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                tempSocket.NoDelay = true; // DISABLE NAGLE
+                tempSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1); // NO REALLY
 
                 tempSocket.Connect(ipe);
 
@@ -144,12 +146,13 @@ namespace ICFP08
 
             m_socket = ConnectSocket(host, port);
             m_socket.NoDelay = true; // DISABLE NAGLE
+            m_socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1); // NO REALLY
             
             // start receiving data
             ReceiveMessage();
         }
 
-        private void Disconnect()
+        public void Disconnect()
         {
             m_socket.Disconnect(false);
         }
@@ -189,7 +192,12 @@ namespace ICFP08
 
         private void ParseMessage(string p)
         {
+            if (p.Trim().Length == 0)
+                return;
             string[] tokens = p.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length == 0)
+                return;
+
             switch (tokens[0])
             {
                 case "I":
@@ -346,6 +354,9 @@ namespace ICFP08
 
         void ReceiveMessage()
         {
+            if (!m_socket.Connected)
+                return;
+
             SocketState s = new SocketState();
             s.workSocket = m_socket;
             s.wrapper = this;
@@ -372,8 +383,15 @@ namespace ICFP08
                         so.sb.Length = 0;
                     }
                 }
-                s.BeginReceive(so.buffer, 0, SocketState.BUFFER_SIZE, 0,
-                                         new AsyncCallback(Read_Callback), so);
+                try
+                {
+                    s.BeginReceive(so.buffer, 0, SocketState.BUFFER_SIZE, 0,
+                         new AsyncCallback(Read_Callback), so);
+                }
+                catch (System.Exception)
+                {
+                	// TODO: handle disconnect
+                }
             }
             else
             {

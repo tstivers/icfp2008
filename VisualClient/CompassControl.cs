@@ -41,6 +41,9 @@ namespace ICFP08
             float x = (compassBox.Width / 2) + (float)Math.Sin(m_angle * (Math.PI / 180.0f)) * 100;
             float y = (compassBox.Height / 2) - (float)Math.Cos(m_angle * (Math.PI / 180.0f)) * 100;
             e.Graphics.DrawLine(Pens.Blue, new Point(compassBox.Width / 2, compassBox.Height / 2), new Point((int)x, (int)y));
+            x = (compassBox.Width / 2) + (float)Math.Sin(m_wanted * (Math.PI / 180.0f)) * 100;
+            y = (compassBox.Height / 2) - (float)Math.Cos(m_wanted * (Math.PI / 180.0f)) * 100;
+            e.Graphics.DrawLine(Pens.Red, new Point(compassBox.Width / 2, compassBox.Height / 2), new Point((int)x, (int)y));
         }
     }
 }

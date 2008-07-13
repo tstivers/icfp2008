@@ -48,6 +48,12 @@
     <Compile Include="ClientForm.Designer.cs">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ControllerChooser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ControllerChooser.Designer.cs">
+      <DependentUpon>ControllerChooser.cs</DependentUpon>
+    </Compile>
     <Compile Include="NumericStatusControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -69,6 +75,10 @@
     <EmbeddedResource Include="ClientForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ClientForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ControllerChooser.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ControllerChooser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NumericStatusControl.resx">
       <SubType>Designer</SubType>
@@ -119,6 +129,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Controllers\Controllers.csproj">
+      <Project>{FD1FA59F-4CA4-4332-A978-CE48ADD38419}</Project>
+      <Name>Controllers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICFP08\ICFP08.csproj">
       <Project>{65BFB16F-4E82-413A-BAAD-CE14E8A35241}</Project>
       <Name>ICFP08</Name>
