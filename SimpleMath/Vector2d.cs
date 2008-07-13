@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 namespace ICFP08
 {
@@ -26,6 +27,12 @@ namespace ICFP08
         {
             this.x = x;
             this.y = y;
+        }
+
+        public Vector2d(float angle)
+        {
+            this.x = (float)Math.Cos(((-1.0f * angle) - 90) * (Math.PI / 180.0f));
+            this.y = (float)Math.Sin(((-1.0f * angle) - 90) * (Math.PI / 180.0f));
         }
 
         public float angle(Vector2d other)
@@ -67,6 +74,11 @@ namespace ICFP08
         public static Vector2d operator *(float f, Vector2d v)
         {
             return new Vector2d(v.x * f, v.y * f);
+        }
+
+        public static implicit operator PointF(Vector2d v)
+        {
+            return new PointF(v.x, v.y);
         }
 
         public float x;

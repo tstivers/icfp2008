@@ -10,6 +10,32 @@ namespace ICFP08
 {
     public partial class WorldVisualizer : Control
     {
+        private struct Line
+        {
+            public Line(Vector2d start, Vector2d end, Pen pen)
+            {
+                this.start = start;
+                this.end = end;
+                this.pen = pen;
+            }
+
+            public Vector2d start;
+            public Vector2d end;
+            public Pen pen;
+        }
+
+        private struct Ellipse
+        {
+            public Ellipse(Rectangle rect, Brush brush)
+            {
+                this.rect = rect;
+                this.brush = brush;
+            }
+
+            public Rectangle rect;
+            public Brush brush;
+        }
+
         private WorldState m_state = null;
         private Brush m_backBrush = null;
         private SolidBrush m_boulderBrush = new SolidBrush(Color.LightGray);
@@ -27,6 +53,8 @@ namespace ICFP08
         private List<Rectangle> m_seenRects;
         private PointF m_offset;
         private SizeF m_scale;
+        private List<Ellipse> m_debugEllipses = new List<Ellipse>();
+        private List<Line> m_debugLines = new List<Line>();
 
         public WorldState State
         {
@@ -200,6 +228,15 @@ namespace ICFP08
                 DrawRover(m_state.Rover, pe.Graphics);
                 foreach (Martian m in m_state.Martians)
                     DrawMartian(m, pe.Graphics);
+                foreach (Ellipse e in m_debugEllipses)
+                {
+                    pe.Graphics.FillEllipse(e.brush, e.rect);
+                    pe.Graphics.DrawEllipse(m_borderPen, e.rect);
+                }
+                foreach (Line l in m_debugLines)
+                    pe.Graphics.DrawLine(l.pen, l.start, l.end);
+                m_debugLines.Clear();
+                m_debugEllipses.Clear();
             }
             //base.OnPaint(pe);            
         }
@@ -321,15 +358,17 @@ namespace ICFP08
             g.DrawEllipse(m_borderPen, rect);
         }
 
-        internal void DrawLine(Vector2d start, Vector2d end)
+        internal void DrawLine(Vector2d start, Vector2d end, Pen p)
         {
             start = WorldToClient(start);
             end = WorldToClient(end);
 
-            using (Graphics g = Graphics.FromImage(m_staticBG))
-            {
-                g.DrawLine(Pens.Red, start.x, start.y, end.x, end.y);
-            }
+            m_debugLines.Add(new Line(start, end, p));
+        }
+
+        public void DrawEllipse(MarsObject obj, Brush b)
+        {
+            m_debugEllipses.Add(new Ellipse(GetObjectRect(obj), b));
         }
     }
 }

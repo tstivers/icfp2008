@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 namespace ICFP08
 {
@@ -12,8 +13,10 @@ namespace ICFP08
         public delegate void LogMessageHandler(string message);
         public event LogMessageHandler LogMessage;
 
-        public delegate void DebugLineHandler(Vector2d start, Vector2d end);
+        public delegate void DebugLineHandler(Vector2d start, Vector2d end, Pen pen);
         public event DebugLineHandler DebugLine;
+        public delegate void DebugEllipseHandler(MarsObject obj, Brush b);
+        public event DebugEllipseHandler DebugEllipse;
 
         public static string Name
         {
@@ -76,10 +79,25 @@ namespace ICFP08
                 LogMessage(message);
         }
 
-        protected void DrawDebugLine(Vector2d start, Vector2d end)
+        protected void DrawDebugLine(Vector2d start, Vector2d end, Pen pen)
         {
             if (DebugLine != null)
-                DebugLine(start, end);
+                DebugLine(start, end, pen);
+        }
+
+        protected void DrawDebugEllipse(MarsObject obj, Brush b)
+        {
+            if (DebugEllipse != null)
+                DebugEllipse(obj, b);
+        }
+
+        protected void DrawDebugRay(Vector2d start, float angle, float length, Pen pen)
+        {
+            Vector2d vec = new Vector2d(
+                (float)Math.Cos(((-1.0f * angle) - 90) * (Math.PI / 180.0f)),
+                (float)Math.Sin(((-1.0f * angle) - 90) * (Math.PI / 180.0f)));
+            Vector2d end = start + (-length * vec);
+            DrawDebugLine(start, end, pen);
         }
     }
 }

@@ -113,7 +113,13 @@ namespace ICFP08
             worldVisualizer.State = m_worldState;
             m_controller = new StupidController(m_worldState, m_wrapper);
             m_controller.DebugLine += new RoverController.DebugLineHandler(m_controller_DebugLine);
+            m_controller.DebugEllipse += new RoverController.DebugEllipseHandler(m_controller_DebugEllipse);
             m_controller.LogMessage += new RoverController.LogMessageHandler(m_controller_LogMessage);
+        }
+
+        void m_controller_DebugEllipse(MarsObject obj, Brush b)
+        {
+            worldVisualizer.DrawEllipse(obj, b);
         }
 
         void m_controller_LogMessage(string message)
@@ -121,9 +127,9 @@ namespace ICFP08
             AddMessage("[controller] " + message);
         }
 
-        void m_controller_DebugLine(Vector2d start, Vector2d end)
+        void m_controller_DebugLine(Vector2d start, Vector2d end, Pen pen)
         {
-            worldVisualizer.DrawLine(start, end);
+            worldVisualizer.DrawLine(start, end, pen);
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
