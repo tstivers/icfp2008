@@ -20,10 +20,11 @@ namespace ICFP08
         private float m_desiredHeading;
         private float m_minAngle = 1.0f;
         private float m_fastAngle = 10.0f;
-        private int m_maxTries = 45; // number of times to try and find a non-colliding heading
-        private float m_brakeSpeed = 80.0f;
+        private int m_maxTries = 360; // number of times to try and find a non-colliding heading
+        private float m_spiralSpeed = 3.0f;
         private float m_avoidAngle = 1.0f;
         private TurnType m_pendingTurn = TurnType.Straight;
+        private bool m_inSpiral = false;
 
         public override Vector2d CurrentTarget
         {
@@ -49,6 +50,7 @@ namespace ICFP08
         void m_server_EndOfRunMessage(object sender, EndOfRunMessageEventArgs ee)
         {
             m_pendingTurn = TurnType.Straight;
+            m_inSpiral = false;
         }
 
         public override void DoUpdate()
@@ -132,8 +134,6 @@ namespace ICFP08
                         MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
                         if (gas == MoveType.Brake)
                             Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
-                        if (m_world.Rover.Speed > m_brakeSpeed)
-                            gas = MoveType.Brake;
                         m_server.SendCommand(gas, TurnType.Right);
                         m_server.SendCommand(gas, TurnType.Right);
                         m_server.SendCommand(gas, TurnType.Right);
@@ -172,8 +172,6 @@ namespace ICFP08
                         MoveType gas = (offset.length() < m_world.Rover.Speed) ? MoveType.Brake : MoveType.Accelerate;
                         if (gas == MoveType.Brake)
                             Log("SPIRALING: " + offset.length() + " < " + m_world.Rover.Speed);
-                        if (m_world.Rover.Speed > m_brakeSpeed)
-                            gas = MoveType.Brake;
                         m_server.SendCommand(gas, TurnType.Left);
                         m_server.SendCommand(gas, TurnType.Left);
                         m_server.SendCommand(gas, TurnType.Left);
@@ -255,7 +253,8 @@ namespace ICFP08
                 if (b.IntersectsLine(m_world.Rover.Position, end, 1.0f))
                 {
                     //DrawDebugEllipse(b, Brushes.Yellow);
-                    if ((m_world.Rover.Position - b.Position).length() - b.Radius < closest_range)
+                    float range = (m_world.Rover.Position - b.Position).length() - (b.Radius + 1.0f);
+                    if (range < closest_range && range > 0.0f) // ignore the obstacle if we think we are inside of it (avoids panics)
                     {
                         closest_range = (m_world.Rover.Position - b.Position).length() - b.Radius;
                         closest_obj = b;
@@ -266,7 +265,8 @@ namespace ICFP08
                 if (c.IntersectsLine(m_world.Rover.Position, end, 1.0f))
                 {
                     //DrawDebugEllipse(c, Brushes.Yellow);
-                    if ((m_world.Rover.Position - c.Position).length() - c.Radius < closest_range)
+                    float range = (m_world.Rover.Position - c.Position).length() - (c.Radius + 1.0f);
+                    if (range < closest_range && range > 0.0f) // ignore the obstacle if we think we are inside of it (avoids panics)
                     {
                         closest_range = (m_world.Rover.Position - c.Position).length() - c.Radius;
                         closest_obj = c;
@@ -277,7 +277,8 @@ namespace ICFP08
                 if (m.IntersectsLine(m_world.Rover.Position, end, 5.0f)) // give martians a wide berth
                 {
                     //DrawDebugEllipse(m, Brushes.Yellow);
-                    if ((m_world.Rover.Position - m.Position).length() - m.Radius < closest_range)
+                    float range = (m_world.Rover.Position - m.Position).length() - (m.Radius + 5.0f);
+                    if (range < closest_range && range > 0.0f) // ignore the obstacle if we think we are inside of it (avoids panics)
                     {
                         closest_range = (m_world.Rover.Position - m.Position).length() - m.Radius;
                         closest_obj = m;
