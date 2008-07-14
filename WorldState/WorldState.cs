@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace ICFP08
 {
@@ -45,19 +46,73 @@ namespace ICFP08
             }
         }
 
-        // yes this is a poor place for this
-        public bool IntersectsLine(Vector2d start, Vector2d end, float lineradius)
+        // adapted from http://forums.xna.com/forums/t/280.aspx 
+        public bool Intersect2(Vector2d start, Vector2d end, float padding, ref Vector2d point)
         {
-            Vector2d dir = end - start;
-            Vector2d diff = m_position - start;
-            float t = diff.dot(dir) / dir.dot(dir);
-            t = Math.Max(t, 0.0f);
-            t = Math.Min(t, 1.0f);
-            Vector2d closest = start + t * dir;
-            Vector2d d = m_position - closest;
-            float distsqr = d.dot(d);
-            return distsqr <= ((m_radius + lineradius) * (m_radius + lineradius));
+            double a = (end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y);
+            double b = 2 * ((end.x - start.x) * (start.x - Position.x) + (end.y - start.y) * (start.y - Position.y));
+            double c = Position.x * Position.x + Position.y * Position.y + start.x * start.x + start.y * start.y -
+                        2 * (Position.x * start.x + Position.y * start.y) - ((Radius + padding) * (Radius + padding));
+            double discriminant = b * b - 4 * a * c;
+
+            if (discriminant <= 0.0) // tangent, don't care (count on the padding)
+            {
+                return false;
+            }
+            else
+            {
+                double e = Math.Sqrt(discriminant);
+                double mu1 = (-b + e) / (2 * a);
+                double mu2 = (-b - e) / (2 * a);
+
+                if ((mu1 < 0.0 || mu1 > 1.0) && (mu2 < 0.0 || mu2 > 1.0))
+                {
+                    if ((mu1 < 0.0 && mu2 < 0.0) || (mu1 > 1.0 && mu2 > 1.0))
+                    {
+                        return false; // intersects the line, not the segment
+                    }
+                    else
+                    {
+                        return false; // inside the circle
+                    }
+                }
+                else
+                {
+                    if (0.0 <= mu1 && mu1 <= 1.0)
+                        point = start.lerp(end, (float)mu1);
+
+                    if (0.0 <= mu2 && mu2 <= 1.0)
+                        point = start.lerp(end, (float)mu2);
+                }
+            }
+            return true;
         }
+
+        public bool Intersect(Vector2d start, Vector2d end, float padding, ref Vector2d point)
+        {
+            Vector2d s = start - Position;
+            float b = (s * s) - ((Radius + padding) * (Radius + padding));
+            if (b < 0.0f)
+                return false;
+
+            Vector2d r = end - start;
+            float c = s * r;
+            float rr = r * r;
+            float sigma = c * c - rr * b;
+            if (sigma < 0.0f || rr < float.Epsilon)
+                return false;
+
+            float a = -(c + (float)Math.Sqrt(sigma));
+            if (0.0f <= a && a <= 1.0f * rr)
+            {
+                a /= rr;
+                point = start.lerp(end, a);
+                return true;
+            }
+
+            return false;
+        }
+
 
         public float DistanceFromLine(Vector2d start, Vector2d end)
         {

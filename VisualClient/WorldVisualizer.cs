@@ -407,6 +407,11 @@ namespace ICFP08
             m_debugEllipses.Add(new Ellipse(GetObjectRect(obj), b));
         }
 
+        public void DrawPoint(Vector2d v, Brush b)
+        {
+            m_debugEllipses.Add(new Ellipse(GetObjectRect(new MarsObject(v, 1)), b));
+        }
+
         private void WorldVisualizer_MouseUp(object sender, MouseEventArgs e)
         {
             if(e.Button == MouseButtons.Left)

@@ -37,7 +37,10 @@ namespace ICFP08
         void worldVisualizer_MapClicked(Vector2d position)
         {
             if (m_controller != null)
+            {
                 m_controller.CurrentTarget = position;
+                m_controller.Flags |= RoverController.DebugFlags.ChooseRandomTarget;
+            }
         }
 
         void m_wrapper_CrashMessage(object sender, EventMessageEventArgs ae)
@@ -127,6 +130,7 @@ namespace ICFP08
             AddMessage("[wrapper] received init message (" + ime.message.size.Width + ", " + ime.message.size.Height + ")");
             m_worldState = new WorldState(ime.message);
             worldVisualizer.State = m_worldState;
+            m_worldState.QuadTree.Collision += new SimpleQuadTree.CollisionHandler(QuadTree_Collision);
             m_controller = new StupidController(m_worldState, m_wrapper);
             m_controller.DebugLine += new RoverController.DebugLineHandler(m_controller_DebugLine);
             m_controller.DebugEllipse += new RoverController.DebugEllipseHandler(m_controller_DebugEllipse);
@@ -134,6 +138,11 @@ namespace ICFP08
             //m_controller.Flags |= RoverController.DebugFlags.DrawProximity;
             //m_controller.Flags |= RoverController.DebugFlags.DrawRays;
             //m_controller.Flags |= RoverController.DebugFlags.ChooseRandomTarget;
+        }
+
+        void QuadTree_Collision(Vector2d point)
+        {
+            worldVisualizer.DrawPoint(point, Brushes.Red);
         }
 
         void m_controller_DebugEllipse(MarsObject obj, Brush b)

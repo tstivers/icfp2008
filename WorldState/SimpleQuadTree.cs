@@ -15,6 +15,18 @@ namespace ICFP08
         public SimpleQuadTree[] children = null;
         public List<MarsObject> objects = new List<MarsObject>();
         public int depth;
+        public SimpleQuadTree parent = null;
+
+        public delegate void CollisionHandler(Vector2d point);
+        public event CollisionHandler Collision;
+
+        public void OnCollision(Vector2d point)
+        {
+            if (parent != null)
+                parent.OnCollision(point);
+            else if (Collision != null)
+                Collision(point);
+        }
 
         public SimpleQuadTree(RectangleF rect)
         {
@@ -26,6 +38,7 @@ namespace ICFP08
         {
             this.rect = rect;
             this.depth = parent.depth + 1;
+            this.parent = parent;
 
             foreach(MarsObject o in parent.objects)
             {
@@ -86,9 +99,11 @@ namespace ICFP08
             foreach (MarsObject o in objects)
             {
                 tests++;
-                if (o.IntersectsLine(origin, end, padding))
+                Vector2d point = new Vector2d();
+                if (o.Intersect(origin, end, padding, ref point))
                 {
-                    float range = (origin - o.Position).length() - (o.Radius + padding);
+                    //OnCollision(point);
+                    float range = (origin - point).length();
                     if (range < closest_range && range > 0.0f)
                     {
                         closest_range = range;

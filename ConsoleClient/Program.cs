@@ -25,28 +25,13 @@ namespace ConsoleClient
             }
         }
 
-        static void s_CraterMessage(object sender, EventMessageEventArgs ae)
-        {
-            Console.WriteLine("Fell into a crater!");
-        }
-
-        static void s_CrashMessage(object sender, EventMessageEventArgs ae)
-        {
-            Console.WriteLine("Crashed!");
-        }
-
-        static void s_KilledMessage(object sender, EventMessageEventArgs ae)
-        {
-            Console.WriteLine("Killed by a martian!");
-        }
-
         static void s_EndOfRunMessage(object sender, EndOfRunMessageEventArgs ee)
         {
             Console.WriteLine("Got end of run message! [time = " + ee.time_stamp + ", score = " + ee.score + "]");
             System.GC.Collect();
             //ws.ForgetStuff();
             runs++;
-            if (runs >= 5)
+            if (runs == 5)
                 s.Disconnect();
         }
 
