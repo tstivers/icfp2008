@@ -49,6 +49,7 @@ namespace ICFP08
         private int m_gridSizeX = 20;
         private int m_gridSizeY = 20;
         private Bitmap m_staticBG;
+        private Bitmap m_doubleBuffer;
         private Rectangle m_roverRect;
         private List<Rectangle> m_seenRects;
         private PointF m_offset;
@@ -225,22 +226,27 @@ namespace ICFP08
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            pe.Graphics.DrawImageUnscaled(m_staticBG, 0, 0);
-            if(m_state != null)
+            using(Graphics g = Graphics.FromImage(m_doubleBuffer))
             {
-                DrawRover(m_state.Rover, pe.Graphics);
-                foreach (Martian m in m_state.Martians)
-                    DrawMartian(m, pe.Graphics);
-                foreach (Ellipse e in m_debugEllipses)
+                g.DrawImageUnscaled(m_staticBG, 0, 0);
+                if(m_state != null)
                 {
-                    pe.Graphics.FillEllipse(e.brush, e.rect);
-                    pe.Graphics.DrawEllipse(m_borderPen, e.rect);
+                    DrawRover(m_state.Rover, g);
+                    foreach (Martian m in m_state.Martians)
+                        DrawMartian(m, g);
+                    foreach (Ellipse e in m_debugEllipses)
+                    {
+                        g.FillEllipse(e.brush, e.rect);
+                        g.DrawEllipse(m_borderPen, e.rect);
+                    }
+                    foreach (Line l in m_debugLines)
+                        g.DrawLine(l.pen, l.start, l.end);
+                    g.DrawString(m_debugLines.Count.ToString(), SystemFonts.CaptionFont, Brushes.Black, new PointF(0, 0));
+                    m_debugLines.Clear();
+                    m_debugEllipses.Clear();
                 }
-                foreach (Line l in m_debugLines)
-                    pe.Graphics.DrawLine(l.pen, l.start, l.end);
-                m_debugLines.Clear();
-                m_debugEllipses.Clear();
             }
+            pe.Graphics.DrawImageUnscaled(m_doubleBuffer, 0, 0);
             //base.OnPaint(pe);            
         }
 
@@ -254,7 +260,10 @@ namespace ICFP08
             base.OnSizeChanged(e);
             if(m_staticBG != null)
                 m_staticBG.Dispose();
+            if (m_doubleBuffer != null)
+                m_doubleBuffer.Dispose();
             m_staticBG = new Bitmap(Width, Height);
+            m_doubleBuffer = new Bitmap(Width, Height);
             ComputeScale();
             UpdateBackground();
         }

@@ -7,6 +7,28 @@ namespace ICFP08
 {
     public class RoverController
     {
+        [Flags]
+        public enum DebugFlags
+        {
+            DrawRays = 1,
+            DrawProximity = 2,
+            DrawDesired = 4,
+            DrawCurrent = 8,
+            ChooseRandomTarget = 16
+        }
+        protected DebugFlags m_debugFlags;
+        public DebugFlags Flags
+        {
+            get
+            {
+                return m_debugFlags;
+            }
+            set
+            {
+                m_debugFlags = value;
+            }
+        }
+
         protected WorldState m_world = null;
         protected ServerWrapper m_server = null;
 

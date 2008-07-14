@@ -192,6 +192,8 @@ namespace ICFP08
 
         public void SendMessage(string m)
         {
+            if (!Connected)
+                return;
             byte[] buffer = Encoding.ASCII.GetBytes(m);
             m_socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Write_Callback), this);
         }
