@@ -250,12 +250,6 @@ namespace ICFP08
             m_pendingTurn = TurnType.Straight;
             m_pendingThrottle = MoveType.Roll;
             m_inSpiral = false;
-            if (m_foundOrigin)
-            {
-                m_target = new Vector2d(
-                    (float)((m_random.NextDouble() * m_world.Size.Width) - (m_world.Size.Width / 2.0)),
-                    (float)((m_random.NextDouble() * m_world.Size.Height) - (m_world.Size.Height / 2.0)));
-            }
         }
 
         public override void DoUpdate()
@@ -419,17 +413,7 @@ namespace ICFP08
 
         private Vector2d ChooseTarget()
         {
-            if (m_world.FoundHome)
-                return m_world.Home.Position;
-            if ((m_target - m_world.Rover.Position).length() < 10.0f) // haven't found home, got to our current target
-            {
-                m_inSpiral = false; // reset death spiral
-                m_foundOrigin = true; // we at least got to the origin
-                return new Vector2d(
-                    (float)((m_random.NextDouble() * m_world.Size.Width) - (m_world.Size.Width / 2.0)),
-                    (float)((m_random.NextDouble() * m_world.Size.Height) - (m_world.Size.Height / 2.0)));
-            }
-            return m_target;
+            return new Vector2d(0.0f, 0.0f);
         }
 
         static Random m_random = new Random();
