@@ -56,6 +56,9 @@ namespace ICFP08
         private List<Ellipse> m_debugEllipses = new List<Ellipse>();
         private List<Line> m_debugLines = new List<Line>();
 
+        public delegate void MapClickedHandler(Vector2d position);
+        public event MapClickedHandler MapClicked;
+
         public WorldState State
         {
             set
@@ -304,6 +307,20 @@ namespace ICFP08
             }
         }
 
+        private Vector2d PointToMap(Point p)
+        {
+            return new Vector2d(
+                ((float)p.X / m_scale.Width) -  m_offset.X,
+                -(((float)p.Y / m_scale.Height) -  m_offset.Y));
+        }
+
+        private PointF MapToPoint(Vector2d v)
+        {
+            return new PointF(
+                (v.x + m_offset.X) * m_scale.Width,
+                (-v.y + m_offset.Y) * m_scale.Height);
+        }
+
         private Rectangle GetObjectRect(MarsObject obj)
         {
             PointF center = new PointF(
@@ -379,6 +396,15 @@ namespace ICFP08
         public void DrawEllipse(MarsObject obj, Brush b)
         {
             m_debugEllipses.Add(new Ellipse(GetObjectRect(obj), b));
+        }
+
+        private void WorldVisualizer_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Left)
+            {
+                if(MapClicked != null)
+                    MapClicked(PointToMap(e.Location));
+            }
         }
     }
 }

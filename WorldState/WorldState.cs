@@ -128,6 +128,22 @@ namespace ICFP08
             }
         }
 
+        // degrees per second
+        public float TurnSpeed
+        {
+            get
+            {
+                return m_max_turn;
+            }
+        }
+        public float HardTurnSpeed
+        {
+            get
+            {
+                return m_max_hard_turn;
+            }
+        }
+
         protected float m_min_sensor;
         protected float m_max_sensor;
         protected float m_max_turn;

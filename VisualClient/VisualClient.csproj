@@ -36,6 +36,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIStatsViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AIStatsViewer.Designer.cs">
+      <DependentUpon>AIStatsViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="CompassControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -68,6 +74,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AIStatsViewer.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AIStatsViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CompassControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CompassControl.cs</DependentUpon>

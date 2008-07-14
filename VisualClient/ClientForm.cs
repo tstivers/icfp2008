@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace ICFP08
 {
@@ -30,6 +31,13 @@ namespace ICFP08
             m_timer.Start();
             roverControlStatus1.WantedMoveChanged += new RoverControlStatus.WantedMoveChangedHandler(roverControlStatus1_WantedMoveChanged);
             roverControlStatus1.WantedTurnChanged += new RoverControlStatus.WantedTurnChangedHandler(roverControlStatus1_WantedTurnChanged);
+            worldVisualizer.MapClicked += new WorldVisualizer.MapClickedHandler(worldVisualizer_MapClicked);
+        }
+
+        void worldVisualizer_MapClicked(Vector2d position)
+        {
+            if (m_controller != null)
+                m_controller.CurrentTarget = position;
         }
 
         void m_wrapper_CrashMessage(object sender, EventMessageEventArgs ae)
@@ -56,6 +64,7 @@ namespace ICFP08
         {
             AddMessage("[wrapper] Run ended: Score " + ee.score);
             m_worldState.ResetWorldState();
+            aiStatsViewer1.Reset();
         }
 
         public void AddMessage(string message)
@@ -91,7 +100,9 @@ namespace ICFP08
             if(!((m_worldState.Rover.Position.x == 0.0f) && (m_worldState.Rover.Position.y == 0.0f)))
                 worldVisualizer.DrawLine(m_worldState.Rover.Position, tme.message.position, Pens.Transparent);
             m_worldState.UpdateWorldState(tme.message);
+            Stopwatch timer = Stopwatch.StartNew();
             m_controller.DoUpdate();
+            aiStatsViewer1.Time = (float)timer.Elapsed.TotalMilliseconds;
             numericStatus.X = tme.message.position.x;
             numericStatus.Y = tme.message.position.y;
             numericStatus.Speed = tme.message.speed;
@@ -107,6 +118,8 @@ namespace ICFP08
             roverControlStatus1.MoveState = tme.message.move_state;
             roverControlStatus1.TurnState = tme.message.turn_state;
             timeLabel.Text = tme.message.time_stamp.ToString();
+            aiStatsViewer1.Casts = m_controller.NumRayCasts;
+            aiStatsViewer1.Tests = m_controller.NumRayTests;
         }
 
         void m_wrapper_InitializationMessage(object sender, InitializationMessageEventArgs ime)

@@ -187,7 +187,12 @@ namespace ICFP08
             else if(turn == TurnType.Right || turn == TurnType.HardRight)
                 command += "r";
             command += ";";
-            byte[] buffer = Encoding.ASCII.GetBytes(command);
+            SendMessage(command);
+        }
+
+        public void SendMessage(string m)
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes(m);
             m_socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Write_Callback), this);
         }
 

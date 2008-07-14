@@ -54,12 +54,43 @@ namespace ICFP08
             {
                 return new Vector2d();
             }
+            set
+            {
+            }
         }
         public virtual float DesiredHeading
         {
             get
             {
                 return 0.0f;
+            }
+        }
+
+        protected int m_numRayCasts;
+        protected int m_numRayTests;
+        protected float m_thinkTime;
+
+        public int NumRayCasts
+        {
+            get
+            {
+                return m_numRayCasts;
+            }
+        }
+
+        public int NumRayTests
+        {
+            get
+            {
+                return m_numRayTests;
+            }
+        }
+
+        public float ThinkTime
+        {
+            get
+            {
+                return m_thinkTime;
             }
         }
 
@@ -71,6 +102,8 @@ namespace ICFP08
 
         public virtual void DoUpdate()
         {
+            m_numRayTests = 0;
+            m_numRayCasts = 0;
         }
 
         protected void Log(string message)

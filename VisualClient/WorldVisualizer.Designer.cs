@@ -30,8 +30,9 @@ namespace ICFP08
         {
             this.SuspendLayout();
             // 
-            // PlayfieldVisualizer
+            // WorldVisualizer
             // 
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.WorldVisualizer_MouseUp);
             this.ResumeLayout(false);
 
         }

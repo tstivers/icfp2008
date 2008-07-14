@@ -47,6 +47,7 @@ namespace ICFP08
             this.numericStatus = new ICFP08.NumericStatusControl();
             this.roverControlStatus1 = new ICFP08.RoverControlStatus();
             this.compassControl = new ICFP08.CompassControl();
+            this.aiStatsViewer1 = new ICFP08.AIStatsViewer();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -192,10 +193,12 @@ namespace ICFP08
             this.tableLayoutPanel1.Controls.Add(this.numericStatus, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.roverControlStatus1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.compassControl, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.aiStatsViewer1, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -277,6 +280,16 @@ namespace ICFP08
             this.compassControl.Size = new System.Drawing.Size(178, 165);
             this.compassControl.TabIndex = 2;
             // 
+            // aiStatsViewer1
+            // 
+            this.aiStatsViewer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.aiStatsViewer1.Casts = 0;
+            this.aiStatsViewer1.Location = new System.Drawing.Point(3, 412);
+            this.aiStatsViewer1.Name = "aiStatsViewer1";
+            this.aiStatsViewer1.Size = new System.Drawing.Size(178, 121);
+            this.aiStatsViewer1.TabIndex = 3;
+            this.aiStatsViewer1.Tests = 0;
+            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,6 +344,7 @@ namespace ICFP08
         private System.Windows.Forms.TextBox messageBox;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private WorldVisualizer worldVisualizer;
+        private AIStatsViewer aiStatsViewer1;
     }
 }
 
