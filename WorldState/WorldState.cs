@@ -45,6 +45,7 @@ namespace ICFP08
             }
         }
 
+        // yes this is a poor place for this
         public bool IntersectsLine(Vector2d start, Vector2d end, float lineradius)
         {
             Vector2d dir = end - start;
@@ -56,6 +57,11 @@ namespace ICFP08
             Vector2d d = m_position - closest;
             float distsqr = d.dot(d);
             return distsqr <= ((m_radius + lineradius) * (m_radius + lineradius));
+        }
+
+        public float DistanceFromLine(Vector2d start, Vector2d end)
+        {
+            return ((end - start) ^ (m_position - start)) / (float)Math.Sqrt((end - start) * (end - start));
         }
 
         protected Vector2d m_position;

@@ -7,6 +7,11 @@ namespace ICFP08
 {
     public struct Vector2d
     {
+        public static Vector2d FromAngle(float angle)
+        {
+            return new Vector2d(angle);
+        }
+
         public override int GetHashCode()
         {
             return x.GetHashCode() ^ y.GetHashCode();
@@ -74,6 +79,21 @@ namespace ICFP08
         public static Vector2d operator *(float f, Vector2d v)
         {
             return new Vector2d(v.x * f, v.y * f);
+        }
+
+        public static float operator *(Vector2d v1, Vector2d v2)
+        {
+            return v1.dot(v2);
+        }
+
+        public static float operator ^(Vector2d v1, Vector2d v2)
+        {
+            return v1.cross(v2);
+        }
+
+        private float cross(Vector2d other)
+        {
+            return (this.x * other.y) - (this.y * other.x);
         }
 
         public static implicit operator PointF(Vector2d v)

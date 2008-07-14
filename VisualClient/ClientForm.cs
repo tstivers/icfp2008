@@ -131,7 +131,8 @@ namespace ICFP08
             m_controller.DebugLine += new RoverController.DebugLineHandler(m_controller_DebugLine);
             m_controller.DebugEllipse += new RoverController.DebugEllipseHandler(m_controller_DebugEllipse);
             m_controller.LogMessage += new RoverController.LogMessageHandler(m_controller_LogMessage);
-            m_controller.Flags |= RoverController.DebugFlags.DrawProximity;
+            //m_controller.Flags |= RoverController.DebugFlags.DrawProximity;
+            //m_controller.Flags |= RoverController.DebugFlags.DrawRays;
             m_controller.Flags |= RoverController.DebugFlags.ChooseRandomTarget;
         }
 
