@@ -1,7 +1,10 @@
 Built with Visual Studio 2005
+All of the pathfinding is in Controllers/StupidController.cs
 Probably builds with the free express version of C#
 The console client is what is run from the livecd
 Most testing was done using the visual client
+
+Note: Contains a segment/circle intersection test from Box2D (thanks Erin Catto!)
 
 "Go that way, really fast. If something gets in your way, turn."
 					- Charles De Mar
