@@ -124,7 +124,13 @@ namespace ICFP08
                 tempSocket.NoDelay = true; // DISABLE NAGLE
                 tempSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, 1); // NO REALLY
 
-                tempSocket.Connect(ipe);
+                try
+                {
+                    tempSocket.Connect(ipe);
+                }
+                catch (Exception)
+                {
+                }
 
                 if (tempSocket.Connected)
                 {
@@ -195,7 +201,13 @@ namespace ICFP08
             if (!Connected)
                 return;
             byte[] buffer = Encoding.ASCII.GetBytes(m);
-            m_socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Write_Callback), this);
+            try
+            {
+                m_socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(Write_Callback), this);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void ParseMessage(string p)

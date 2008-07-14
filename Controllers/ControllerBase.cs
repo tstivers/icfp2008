@@ -29,6 +29,16 @@ namespace ICFP08
             }
         }
 
+        protected double m_spinTime = 0.0;
+        public double SpinTime
+        {
+            get
+            {
+                return m_spinTime;
+            }
+        }
+
+
         protected WorldState m_world = null;
         protected ServerWrapper m_server = null;
 
@@ -126,6 +136,7 @@ namespace ICFP08
         {
             m_numRayTests = 0;
             m_numRayCasts = 0;
+            m_spinTime = 0.0;
         }
 
         protected void Log(string message)

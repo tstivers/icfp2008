@@ -102,7 +102,7 @@ namespace ICFP08
             m_worldState.UpdateWorldState(tme.message);
             Stopwatch timer = Stopwatch.StartNew();
             m_controller.DoUpdate();
-            aiStatsViewer1.Time = (float)timer.Elapsed.TotalMilliseconds;
+            aiStatsViewer1.Time = (float)timer.Elapsed.TotalMilliseconds - (float)m_controller.SpinTime;
             numericStatus.X = tme.message.position.x;
             numericStatus.Y = tme.message.position.y;
             numericStatus.Speed = tme.message.speed;
@@ -133,7 +133,7 @@ namespace ICFP08
             m_controller.LogMessage += new RoverController.LogMessageHandler(m_controller_LogMessage);
             //m_controller.Flags |= RoverController.DebugFlags.DrawProximity;
             //m_controller.Flags |= RoverController.DebugFlags.DrawRays;
-            m_controller.Flags |= RoverController.DebugFlags.ChooseRandomTarget;
+            //m_controller.Flags |= RoverController.DebugFlags.ChooseRandomTarget;
         }
 
         void m_controller_DebugEllipse(MarsObject obj, Brush b)

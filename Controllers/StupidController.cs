@@ -16,7 +16,7 @@ namespace ICFP08
                 return "StupidController";
             }
         }
-        private Vector2d m_target;
+        private Vector2d m_target = new Vector2d(0, 0);
         private float m_desiredHeading;
         private float m_minAngle = 0.1f;
         private float m_fastAngle = 15.0f;
@@ -28,7 +28,9 @@ namespace ICFP08
         private TurnType m_pendingTurn = TurnType.Straight;
         private MoveType m_pendingThrottle = MoveType.Roll;
         private bool m_inSpiral = false;
-        private float m_criticalTurn = 1.0f;
+        private float m_criticalTurn = 5.0f;
+        private float m_criticalDistance = 10.0f;
+        private bool m_foundOrigin = false;
 
         private float m_shortTurnAngle = 3.0f;
         private double m_msPerDegree = 20.0;
@@ -134,11 +136,13 @@ namespace ICFP08
             return m_moveTable[new MoveTableEntry(current, wanted)];
         }
 
+        // unfortunately this doesn't work out
         public void DoShortTurn(TurnType direction, double time)
         {
-            DoTurn(direction);
-            Stopwatch s = Stopwatch.StartNew();
-            while (s.Elapsed.TotalMilliseconds < time + m_msPadding) ; // spin
+            //DoTurn(direction);
+           // m_spinTime += time;
+            //Stopwatch s = Stopwatch.StartNew();
+            //while (s.Elapsed.TotalMilliseconds < time + m_msPadding) ; // spin
             DoTurn(TurnType.Straight);
             m_pendingTurn = TurnType.Straight;
         }
@@ -242,7 +246,12 @@ namespace ICFP08
             m_pendingTurn = TurnType.Straight;
             m_pendingThrottle = MoveType.Roll;
             m_inSpiral = false;
-            m_target = new Vector2d();
+            if (m_foundOrigin)
+            {
+                m_target = new Vector2d(
+                    (float)((m_random.NextDouble() * m_world.Size.Width) - (m_world.Size.Width / 2.0)),
+                    (float)((m_random.NextDouble() * m_world.Size.Height) - (m_world.Size.Height / 2.0)));
+            }
         }
 
         public override void DoUpdate()
@@ -263,9 +272,10 @@ namespace ICFP08
                 m_desiredHeading += 360.0f;
             if (m_desiredHeading > 360.0f)
                 m_desiredHeading -= 360.0f;
+            
 
             // check for collisions on our current desired trajectory
-            if (TrajectoryHitsObject(m_desiredHeading, target_distance, 0.5f, true))
+            if (TrajectoryHitsObject(m_desiredHeading, target_distance, 1.0f, true))
             {
                // find a new heading
                 for (int num_tries = 1; num_tries < m_maxTries; num_tries++)
@@ -318,6 +328,7 @@ namespace ICFP08
                 gas = MoveType.Brake;
             }
 
+
             // set our speed
             SetThrottle(gas);
         }
@@ -329,7 +340,7 @@ namespace ICFP08
             if (turn_angle < -180.0f) turn_angle = 360.0f - turn_angle;
 
             float critical_distance = float.MaxValue;
-            MarsObject critical_object = GetClosestObstacle(m_world.Rover.Position, m_world.Rover.Direction, m_world.Rover.Speed * 1.5f, 0.5f, false);
+            MarsObject critical_object = GetClosestObstacle(m_world.Rover.Position, m_world.Rover.Direction, m_world.Rover.Speed * 1.5f, 1.0f, true);
             if (critical_object != null)
             {
                 critical_distance = (critical_object.Position - m_world.Rover.Position).length() - critical_object.Radius - 0.5f;
@@ -337,9 +348,13 @@ namespace ICFP08
                 Vector2d end = m_world.Rover.Position + (m_world.Rover.Speed  * angle);
                 float collision_offset = critical_object.DistanceFromLine(m_world.Rover.Position, end);
                 TurnType dir = critical_object.DistanceFromLine(m_world.Rover.Position, end) > 0.0 ? TurnType.Left : TurnType.Right;
-                if((critical_object.Radius - Math.Abs(collision_offset) > m_criticalTurn) ||
-                    critical_distance < m_criticalTurn)
+                if ((critical_object.Radius - Math.Abs(collision_offset) > m_criticalTurn) ||
+                    critical_distance < m_criticalDistance)
+                {
                     dir = critical_object.DistanceFromLine(m_world.Rover.Position, end) > 0.0 ? TurnType.HardLeft : TurnType.HardRight;
+                    gas = MoveType.Brake;
+                    Log("BRAKING");
+                }
                 DoTurn(dir);
                 return false;
             }
@@ -347,10 +362,10 @@ namespace ICFP08
             float safe_angle = float.MaxValue;
             float closest_distance = float.MaxValue;
 
-            float inc = turn_angle > 0.0f ? 1.0f : -1.0f;
+            float inc = turn_angle > 0.0f ? 0.5f : -0.5f;
             for (float angle = 0.0f; Math.Abs(angle) < Math.Abs(turn_angle); angle += inc)
             {
-                float temp_closest = GetClosestDistance(m_world.Rover.Position, m_world.Rover.Direction + angle, m_world.Rover.Speed * 1.5f, 1.0f, false);
+                float temp_closest = GetClosestDistance(m_world.Rover.Position, m_world.Rover.Direction + angle, m_world.Rover.Speed * 1.5f, 1.0f, true);
                 closest_distance = Math.Min(closest_distance, temp_closest);
                 if (closest_distance == float.MaxValue) // still nothing
                     safe_angle = angle;
@@ -358,7 +373,7 @@ namespace ICFP08
 
             if (safe_angle != float.MaxValue)
             {
-                DrawDebugRay(m_world.Rover.Position, m_world.Rover.Direction + safe_angle, m_world.Rover.Speed * 1.5f, Pens.Green);
+                //DrawDebugRay(m_world.Rover.Position, m_world.Rover.Direction + safe_angle, m_world.Rover.Speed * 1.5f, Pens.Green);
                 heading = m_world.Rover.Direction + safe_angle;
                 return true;
             }
@@ -383,7 +398,15 @@ namespace ICFP08
         {
             if (m_world.FoundHome)
                 return m_world.Home.Position;
-            return new Vector2d(0, 0);
+            if ((m_target - m_world.Rover.Position).length() < 10.0f) // haven't found home, got to our current target
+            {
+                m_inSpiral = false; // reset death spiral
+                m_foundOrigin = true; // we at least got to the origin
+                return new Vector2d(
+                    (float)((m_random.NextDouble() * m_world.Size.Width) - (m_world.Size.Width / 2.0)),
+                    (float)((m_random.NextDouble() * m_world.Size.Height) - (m_world.Size.Height / 2.0)));
+            }
+            return m_target;
         }
 
         static Random m_random = new Random();
@@ -411,51 +434,24 @@ namespace ICFP08
         private float NearestObject(float heading, float max_dist, float padding, ref MarsObject closest_obj, bool check_martians)
         {
             m_numRayCasts++;
+            max_dist = Math.Min(max_dist, m_world.Rover.Speed * 5.0f);
+            //Vector2d angle = new Vector2d(
+            //    (float)Math.Cos(((-1.0f * heading) - 90) * (Math.PI / 180.0f)), 
+            //    (float)Math.Sin(((-1.0f * heading) - 90) * (Math.PI / 180.0f)));
+            //Vector2d end = m_world.Rover.Position + (-max_dist * angle);
+            Vector2d end = m_world.Rover.Position + (Vector2d.FromAngle(heading) * -max_dist);
 
-            Vector2d angle = new Vector2d(
-                (float)Math.Cos(((-1.0f * heading) - 90) * (Math.PI / 180.0f)), 
-                (float)Math.Sin(((-1.0f * heading) - 90) * (Math.PI / 180.0f)));
-            Vector2d end = m_world.Rover.Position + (-max_dist * angle);
-            //DrawDebugLine(m_world.Rover.Position, end, Pens.Red);
+            //DrawDebugLine(m_world.Rover.Position, end, Pens.Blue);
 
             float closest_range = float.MaxValue;
-
-            foreach (Boulder b in m_world.Boulders)
-            {
-                m_numRayTests++;
-                if (b.IntersectsLine(m_world.Rover.Position, end, padding))
-                {
-                    //DrawDebugEllipse(b, Brushes.Yellow);
-                    float range = (m_world.Rover.Position - b.Position).length() - (b.Radius + padding);
-                    if (range < closest_range && range > 0.0f) // ignore the obstacle if we think we are inside of it (avoids panics)
-                    {
-                        closest_range = range;
-                        closest_obj = b;
-                    }
-                }
-            }
-
-            foreach (Crater c in m_world.Craters)
-            {
-                m_numRayTests++;
-                if (c.IntersectsLine(m_world.Rover.Position, end, padding))
-                {
-                    //DrawDebugEllipse(c, Brushes.Yellow);
-                    float range = (m_world.Rover.Position - c.Position).length() - (c.Radius + padding);
-                    if (range < closest_range && range > 0.0f) // ignore the obstacle if we think we are inside of it (avoids panics)
-                    {
-                        closest_range = range;
-                        closest_obj = c;
-                    }
-                }
-            }
+            m_world.QuadTree.FindClosestCollision(m_world.Rover.Position, heading, max_dist, padding, ref closest_obj, ref closest_range, ref m_numRayTests);
 
             if (check_martians)
             {
                 foreach (Martian m in m_world.Martians)
                 {
-                    m_numRayTests++;
-                    if (m.IntersectsLine(m_world.Rover.Position, end, 5.0f)) // give martians a wide berth
+                    //m_numRayTests++;
+                    if (m.IntersectsLine(m_world.Rover.Position, end, padding)) // give martians a wide berth
                     {
                         //DrawDebugEllipse(m, Brushes.Yellow);
                         float range = (m_world.Rover.Position - m.Position).length() - (m.Radius + padding);

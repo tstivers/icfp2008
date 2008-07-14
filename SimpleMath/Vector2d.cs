@@ -81,6 +81,11 @@ namespace ICFP08
             return new Vector2d(v.x * f, v.y * f);
         }
 
+        public static Vector2d operator *(Vector2d v, float f)
+        {
+            return new Vector2d(v.x * f, v.y * f);
+        }
+
         public static float operator *(Vector2d v1, Vector2d v2)
         {
             return v1.dot(v2);

@@ -66,6 +66,11 @@ namespace ICFP08
 
         protected Vector2d m_position;
         protected float m_radius;
+
+        public RectangleF GetRect()
+        {
+            return new RectangleF(Position.x - Radius, Position.y - Radius, Radius, Radius);
+        }
     }
 
     public class MobileObject : MarsObject
@@ -161,7 +166,7 @@ namespace ICFP08
     public class Martian : MobileObject
     {
         public Martian(Vector2d position, float direction, float speed) 
-            : base(position, direction, speed, 2.5f) // oversize martians because they're scary BUT DON'T OVERDO IT
+            : base(position, direction, speed, 0.4f) // oversize martians because they're scary NO NO NO
         {
         }
     }
@@ -200,6 +205,7 @@ namespace ICFP08
         private SizeF m_size;
         private int m_timeLimit = 0;
         private int m_lastUpdate = 0;
+        private SimpleQuadTree m_tree = null;
 
         public SizeF Size
         {
@@ -261,6 +267,13 @@ namespace ICFP08
                 return Home != null;
             }
         }
+        public SimpleQuadTree QuadTree
+        {
+            get
+            {
+                return m_tree;
+            }
+        }
 
         public delegate void ObjectHandler(WorldState world, MarsObject obj);
         public delegate void BoulderHandler(WorldState world, Boulder b);
@@ -285,6 +298,7 @@ namespace ICFP08
             m_size = init.size;
             m_rover = new Rover(init.min_sensor, init.max_sensor, init.max_turn, init.max_hard_turn);
             m_timeLimit = init.time_limit;
+            m_tree = new SimpleQuadTree(new RectangleF(-(m_size.Width / 2.0f), -(m_size.Height / 2.0f), m_size.Width, m_size.Height));
         }
 
         public void UpdateWorldState(TelemetryMessage telemetry)
@@ -301,6 +315,7 @@ namespace ICFP08
                         {
                             m_boulders.Add(b, telemetry.time_stamp);
                             OnBoulderFound(b);
+                            m_tree.AddObject(b);
                         }
                         else
                         {
@@ -314,6 +329,7 @@ namespace ICFP08
                         {
                             m_craters.Add(c, telemetry.time_stamp);
                             OnCraterFound(c);
+                            m_tree.AddObject(c);
                         }
                         else
                         {
