@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ICFP08;
+using System.Threading;
 
 namespace ConsoleClient
 {
@@ -21,7 +22,8 @@ namespace ConsoleClient
             s.Connect(args[0], int.Parse(args[1]));
             while (s.Connected)
             {
-                s.ProcessMessages();
+                if(s.ProcessMessages() == 0)
+                    Thread.Sleep(1);
             }
         }
 

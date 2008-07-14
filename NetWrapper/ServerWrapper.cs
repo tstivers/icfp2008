@@ -164,8 +164,9 @@ namespace ICFP08
                 m_socket.Disconnect(false);
         }
 
-        public void ProcessMessages()
+        public int ProcessMessages()
         {
+            int num_messages = 0;
             lock(m_messagelock)
             {
                 foreach(string message in m_messages)
@@ -173,9 +174,11 @@ namespace ICFP08
                     if (MessageReceived != null)
                         MessageReceived(this, new MessageEventArgs(message));
                     ParseMessage(message);
+                    num_messages++;
                 }
                 m_messages.Clear();
             }
+            return num_messages;
         }
 
         public void SendCommand(MoveType move, TurnType turn)
