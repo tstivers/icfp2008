@@ -36,9 +36,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleQuadTree.cs" />
-    <Compile Include="..\..\..\..\..\Desktop\WorldState.cs">
-      <Link>WorldState.cs</Link>
-    </Compile>
+    <Compile Include="WorldState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICFP08\ICFP08.csproj">

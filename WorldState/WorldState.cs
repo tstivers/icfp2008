@@ -46,52 +46,11 @@ namespace ICFP08
             }
         }
 
-        // adapted from http://forums.xna.com/forums/t/280.aspx 
-        public bool Intersect2(Vector2d start, Vector2d end, float padding, ref Vector2d point)
-        {
-            double a = (end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y);
-            double b = 2 * ((end.x - start.x) * (start.x - Position.x) + (end.y - start.y) * (start.y - Position.y));
-            double c = Position.x * Position.x + Position.y * Position.y + start.x * start.x + start.y * start.y -
-                        2 * (Position.x * start.x + Position.y * start.y) - ((Radius + padding) * (Radius + padding));
-            double discriminant = b * b - 4 * a * c;
-
-            if (discriminant <= 0.0) // tangent, don't care (count on the padding)
-            {
-                return false;
-            }
-            else
-            {
-                double e = Math.Sqrt(discriminant);
-                double mu1 = (-b + e) / (2 * a);
-                double mu2 = (-b - e) / (2 * a);
-
-                if ((mu1 < 0.0 || mu1 > 1.0) && (mu2 < 0.0 || mu2 > 1.0))
-                {
-                    if ((mu1 < 0.0 && mu2 < 0.0) || (mu1 > 1.0 && mu2 > 1.0))
-                    {
-                        return false; // intersects the line, not the segment
-                    }
-                    else
-                    {
-                        return false; // inside the circle
-                    }
-                }
-                else
-                {
-                    if (0.0 <= mu1 && mu1 <= 1.0)
-                        point = start.lerp(end, (float)mu1);
-
-                    if (0.0 <= mu2 && mu2 <= 1.0)
-                        point = start.lerp(end, (float)mu2);
-                }
-            }
-            return true;
-        }
-
+        // adapted (copied) from Box2D, thanks Erin Catto!
         public bool Intersect(Vector2d start, Vector2d end, float padding, ref Vector2d point)
         {
-            Vector2d s = start - Position;
-            float b = (s * s) - ((Radius + padding) * (Radius + padding));
+            Vector2d s = start - m_position;
+            float b = (s * s) - ((m_radius + padding) * (m_radius + padding));
             if (b < 0.0f)
                 return false;
 
